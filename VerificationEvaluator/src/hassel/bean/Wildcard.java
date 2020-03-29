@@ -2,7 +2,6 @@ package hassel.bean;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class Wildcard{
@@ -178,6 +177,35 @@ public class Wildcard{
 					result = new ArrayList<Wildcard>();
 					result.add(new Wildcard(this.length,'x'));
 				}
+			}
+		}
+		return result;
+	}
+	
+	public int rewrite(Wildcard mask, Wildcard rewrite) {
+		int result = 0;
+		BitSet tmp1 = new BitSet();
+		tmp1.or(wcBit);
+		BitSet tmp2 = new BitSet();
+		tmp2.or(wcBit);
+		BitSet oddMask = new BitSet();
+		BitSet evenMask = new BitSet();
+		for(int i = 0; i < length; i++) {
+			evenMask.set(2*i+1);
+		}
+		oddMask.set(0, 2*length);
+		oddMask.xor(evenMask);
+		tmp1.or(mask.getWcBit());
+		tmp1.and(rewrite.getWcBit());
+		tmp1.and(oddMask);
+		tmp2.and(mask.getWcBit());
+		tmp2.or(mask.getWcBit());
+		tmp2.and(evenMask);
+		tmp1.or(tmp2);
+		wcBit=tmp1;
+		for(int i = 0; i<length;i++) {
+			if(wcBit.get(2*i)&&wcBit.get(2*i+1)) {
+				result++;
 			}
 		}
 		return result;

@@ -346,8 +346,7 @@ public class HS{
 		this.hsDiff = newHSDiff;
 	}
 	
-	public void pushAppliedTfRule(String device, String rulsID, int inPort) {
-		appliedDevices.add(device);
+	public void pushAppliedTfRule(String rulsID, int inPort) {
 		appliedRuleIDs.add(rulsID);
 		appliedInport.add(inPort);
 		

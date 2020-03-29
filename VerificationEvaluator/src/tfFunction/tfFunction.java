@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import bean.Node;
+import hassel.bean.HS;
 import hassel.bean.Wildcard;
 import rules.Influence;
 import rules.Rule;
@@ -17,6 +18,7 @@ public class tfFunction{
 	HashMap<Integer, ArrayList<Rule>> outportToRule= new HashMap<Integer, ArrayList<Rule>>();
 	HashMap<String, Rule> idToRule = new HashMap<String,Rule>();
 	boolean hashTableActive = false;
+	boolean sendOnReceivingPort = false;
 	
 	public String generateNextID() {
 		nextID++;
@@ -67,6 +69,22 @@ public class tfFunction{
 		}
 		//Setting up fast lookups and influences
 		this.findInfluences(position);
+		this.setFastLookupPointers(position);
+	}
+	
+	public void addLinkRule(Rule rule) {
+		addLinkRule(rule,-1);
+	}
+	
+	public void addLinkRule(Rule rule, int position) {
+		rule.setAction("link");
+		rule.setId(this.generateNextID());
+		if(position == -1) {
+			this.rules.add(rule);
+			position = this.rules.size()-1;
+		}else {
+			this.rules.add(position, rule);
+		}
 		this.setFastLookupPointers(position);
 	}
 	
@@ -126,6 +144,99 @@ public class tfFunction{
 		//rule-id based lookup table
 		this.idToRule.put(newRule.getId(), newRule);
 		//TODO: hash table set up
+	}
+	
+	public ArrayList<Node> applyRewriteRule(Rule rule, Node input, ArrayList<String> appliedRules){
+		ArrayList<Node> result = new ArrayList<Node>();
+		ArrayList<Integer> modOutPorts = new ArrayList<Integer>();
+		modOutPorts.addAll(rule.getOutPorts());
+		//If not sedning on receiving port, remove it from outports.
+		if(!this.sendOnReceivingPort&&modOutPorts.contains(input.getPort())) {
+			modOutPorts.remove(modOutPorts.indexOf(input.getPort()));
+		}
+		//If no outport, don't do anything.
+		if(modOutPorts.size() == 0) {
+			appliedRules.add(rule.getId());
+			return result;
+		}
+		//check if match pattern matches and port is in in_ports.
+		HS newHS = input.getHdr().copyAnd(rule.getMatch());
+		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+			for(Influence inf:rule.getAffectedBy()) {
+				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
+					newHS.diffHS(inf.getIntersect());
+				}
+			}
+			//apply mask,rewrite to all elements in hs_list and hs_diff, 
+            //considering the cardinality.
+			for(int i = 0; i<newHS.getHsList().size();i++) {
+				//TODO how rewrite? tf.py line 461
+				int card = newHS.getHsList().get(i).rewrite(rule.getMask(), rule.getRewrite());
+				ArrayList<Wildcard> newDiffList = new ArrayList<Wildcard>();
+				for(int j = 0; j<newHS.getHsDiff().get(i).size();j++) {
+					int diffCard = newHS.getHsDiff().get(i).get(j).rewrite(rule.getMask(), rule.getRewrite());
+					if(diffCard==card) {
+						newDiffList.add(newHS.getHsDiff().get(i).get(j));
+					}
+				}
+				newHS.getHsDiff().set(i, newDiffList);
+			}
+			newHS.cleanUp();
+			if(newHS.count() == 0) {
+				appliedRules.add(rule.getId());
+				return result;
+			}
+			newHS.pushAppliedTfRule(rule.getId(), input.getPort());
+			appliedRules.add(rule.getId());
+		}
+		return result;
+	}
+	
+	public ArrayList<Node> applyFwdRule(Rule rule, Node input, ArrayList<String> appliedRules){
+		ArrayList<Node> result = new ArrayList<Node>();
+		ArrayList<Integer> modOutPorts = new ArrayList<Integer>();
+		modOutPorts.addAll(rule.getOutPorts());
+		//If not sedning on receiving port, remove it from outports.
+		if(!this.sendOnReceivingPort&&modOutPorts.contains(input.getPort())) {
+			modOutPorts.remove(modOutPorts.indexOf(input.getPort()));
+		}
+		//If no outport, don't do anything.
+		if(modOutPorts.size() == 0) {
+			appliedRules.add(rule.getId());
+			return result;
+		}
+		//check if match pattern matches and port is in in_ports.
+		HS newHS = input.getHdr().copyAnd(rule.getMatch());
+		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+			for(Influence inf:rule.getAffectedBy()) {
+				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
+					newHS.diffHS(inf.getIntersect());
+				}
+			}
+			newHS.cleanUp();
+			if(newHS.count()==0) {
+				appliedRules.add(rule.getId());
+				return result;
+			}
+			newHS.pushAppliedTfRule(rule.getId(), input.getPort());
+			appliedRules.add(rule.getId());
+			for(int outPort:modOutPorts) {
+				result.add(new Node(newHS,outPort));
+			}
+		}
+		return result;
+	}
+	
+	public ArrayList<Node> applyLinkRule(Rule rule, Node input){
+		ArrayList<Node> result = new ArrayList<Node>();
+		if(rule.getInPorts().contains(input.getPort())) {
+			HS ohs = input.getHdr().copy();
+			ohs.pushAppliedTfRule(rule.getId(), input.getPort());
+			for(int outPort: rule.getOutPorts()) {
+				result.add(new Node(ohs,outPort));
+			}
+		}
+		return result;
 	}
 	
 	public ArrayList<Rule> getRulesForInport(int inport){
