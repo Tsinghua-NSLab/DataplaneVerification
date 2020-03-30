@@ -9,8 +9,17 @@ public class Node {
 	String deviceName;
 	int port = -1;
 	boolean isOut;
-	ArrayList<String> visits = new ArrayList<String>();
+	ArrayList<Integer> visits = new ArrayList<Integer>();
 	ArrayList<HS> hsHistory = new ArrayList<HS>();
+	
+	public Node() {
+	}
+	
+	public Node(Node node) {
+		this.hdr = node.getHdr().copy();
+		this.port = node.getPort();
+	}
+	
 	public Node(HS hdr, int port) {
 		this.hdr = hdr.copy();
 		this.port = port;
@@ -28,10 +37,10 @@ public class Node {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	public ArrayList<String> getVisits() {
+	public ArrayList<Integer> getVisits() {
 		return visits;
 	}
-	public void setVisits(ArrayList<String> visits) {
+	public void setVisits(ArrayList<Integer> visits) {
 		this.visits = visits;
 	}
 	public ArrayList<HS> getHsHistory() {

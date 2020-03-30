@@ -239,6 +239,36 @@ public class tfFunction{
 		return result;
 	}
 	
+	public ArrayList<Node> T(Node node){
+		ArrayList<Node> result = new ArrayList<Node>();
+		ArrayList<String> appliedRules = new ArrayList<String>();
+		ArrayList<Rule> ruleSet = new ArrayList<Rule>();
+		
+		if(this.hashTableActive) {
+			for(Wildcard w: node.getHdr().getHsList()) {
+				//TODO implement hash table
+			}
+		}else {
+			ruleSet = this.getRulesForInport(node.getPort());
+		}
+		
+		//lazyTfRuleIDs
+		for(Rule rule: ruleSet) {
+			//TODO check if this rule qualifies for lazy evaluation
+			if(rule.getAction()=="link") {
+				result.addAll(this.applyLinkRule(rule, node));
+			}else if(rule.getAction()=="rw") {
+				result.addAll(this.applyRewriteRule(rule, node, appliedRules));
+			}else if(rule.getAction()=="fwd") {
+				result.addAll(this.applyFwdRule(rule, node, appliedRules));
+			}
+		}
+		//TODO lazy tf rules
+		//TODO custom rules
+		
+		return result;
+	}
+	
 	public ArrayList<Rule> getRulesForInport(int inport){
 		if(this.inportToRule.containsKey(inport)){
 			return this.inportToRule.get(inport);
