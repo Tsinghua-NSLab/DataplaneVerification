@@ -3,9 +3,12 @@ package tfFunction;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import bean.Link;
+import bean.Network;
 import bean.Node;
 import hassel.bean.HS;
 import hassel.bean.Wildcard;
+import interfaces.Parser;
 import rules.Influence;
 import rules.Rule;
 
@@ -14,6 +17,7 @@ public class tfFunction{
 	int nextID = 0;
 	String prefixID = "";
 	ArrayList<Rule> rules = new ArrayList<Rule>();
+	HashMap<String, Parser> parserList = new HashMap<String, Parser>();
 	HashMap<Integer, ArrayList<Rule>> inportToRule= new HashMap<Integer, ArrayList<Rule>>();
 	HashMap<Integer, ArrayList<Rule>> outportToRule= new HashMap<Integer, ArrayList<Rule>>();
 	HashMap<String, Rule> idToRule = new HashMap<String,Rule>();
@@ -281,6 +285,28 @@ public class tfFunction{
 			return this.outportToRule.get(outport);
 		}
 		return new ArrayList<Rule>();
+	}
+	
+	public void writeTopology(Network network) {
+		System.out.println("===Generating Topology===");
+		int outPortAddition = Parser.PORT_TYPE_MULTIPLIER*Parser.OUTPUT_PORT_TYPE_CONST;
+		for(Link link:network.getLinks()) {
+			Parser fromRtr = parserList.get(link.getDevice1());
+			Parser toRtr = parserList.get(link.getDevice2());
+			ArrayList<Integer> fromPorts = new ArrayList<Integer>();
+			ArrayList<Integer> toPorts = new ArrayList<Integer>();
+			fromPorts.add(fromRtr.get_port_id(link.getIface1())+outPortAddition);
+			toPorts.add(toRtr.get_port_id(link.getIface2()));
+			Rule rule = new Rule(fromPorts, null, toPorts, null, null);
+			this.addLinkRule(rule);
+			fromPorts.clear();
+			toPorts.clear();
+			fromPorts.add(toRtr.get_port_id(link.getIface2())+outPortAddition);
+			toPorts.add(fromRtr.get_port_id(link.getIface1()));
+			rule = new Rule(fromPorts, null, toPorts, null, null);
+			this.addLinkRule(rule);
+		}
+		System.out.println("===Finished Generating Topology===");
 	}
 
 }

@@ -28,11 +28,11 @@ import tfFunction.tfFunction;
 import utils.Helper;
 
 public class CiscoParser implements Parser{
-	int PORT_ID_MULTIPLIER = 1;
-	int INTERMEDIATE_PORT_TYPE_CONST = 1;
-	int OUTPUT_PORT_TYPE_CONST = 2;
-	int PORT_TYPE_MULTIPLIER = 10000;
-	int SWITCH_ID_MULTIPLIER = 100000;
+	static int PORT_ID_MULTIPLIER = 1;
+	static int INTERMEDIATE_PORT_TYPE_CONST = 1;
+	static int OUTPUT_PORT_TYPE_CONST = 2;
+	static int PORT_TYPE_MULTIPLIER = 10000;
+	static int SWITCH_ID_MULTIPLIER = 100000;
 	
 	HashMap<Integer, ArrayList<ACL>> ACLList = new HashMap<Integer, ArrayList<ACL>>();
     HashMap<Integer, ArrayList<String>> vlanSpanPorts = new HashMap<Integer, ArrayList<String>>();
@@ -48,12 +48,20 @@ public class CiscoParser implements Parser{
     int defVlan = 1;
     //TODO remove temp instances
     ciscoHeader cHeader = new ciscoHeader();
-    tfFunction tf = new tfFunction();
+    tfFunction tf = null;
     
     public CiscoParser(int switchID) {
 		super();
 		this.switchID = switchID;
 	}
+    
+    public void setTF(tfFunction NTF) {
+    	this.tf = NTF;
+    }
+    
+    public tfFunction getTF() {
+    	return this.tf;
+    }
     
     public void setDefaultVlan(int vlan) {
     	this.defVlan = vlan;
@@ -291,7 +299,7 @@ public class CiscoParser implements Parser{
 		}
 		int suffix = 1;
 		for(String port: additionalPorts) {
-			int id = this.switchID*this.SWITCH_ID_MULTIPLIER + suffix*this.PORT_ID_MULTIPLIER;
+			int id = this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER + suffix*CiscoParser.PORT_ID_MULTIPLIER;
 			this.portToID.put(port, id);
 			suffix++;
 		}
@@ -345,7 +353,7 @@ public class CiscoParser implements Parser{
 						ArrayList<Integer> inPorts = trunkPorts;
 						ArrayList<Integer> outPorts = new ArrayList<Integer>();
 						if(aclDicEntry.isAction()) {
-							outPorts.add(this.switchID*this.SWITCH_ID_MULTIPLIER);
+							outPorts.add(this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER);
 						}
 						for(Wildcard match: matches) {
 							//IN ACL for VLAN tagged packets going to trunk or access ports
@@ -380,10 +388,10 @@ public class CiscoParser implements Parser{
 								ArrayList<Integer> outPorts = new ArrayList<Integer>();
 								ArrayList<Integer> inPorts = new ArrayList<Integer>();
 								for(int port: trunkPorts) {
-									inPorts.add(port+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
+									inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
 								}
 								for(int port: accessPorts) {
-									inPorts.add(port+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
+									inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
 								}
 								//Rule nextRule = new Rule(inPorts, match,outPorts,null,null,filename,lines);
 								Rule nextRule = new Rule(inPorts, match,outPorts,null,null);
@@ -392,8 +400,8 @@ public class CiscoParser implements Parser{
 								for(int port: trunkPorts) {
 									ArrayList<Integer> outPorts = new ArrayList<Integer>();
 									ArrayList<Integer> inPorts = new ArrayList<Integer>();
-									inPorts.add(port+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
-									outPorts.add(port + this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+									inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
+									outPorts.add(port + CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 									//Rule nextRule = new Rule(inPorts, match, outPorts, null, null, filename, lines);
 									Rule nextRule = new Rule(inPorts, match, outPorts, null, null);
 									tf.addFwdRule(nextRule);
@@ -401,8 +409,8 @@ public class CiscoParser implements Parser{
 								for(int port: accessPorts) {
 									ArrayList<Integer> outPorts = new ArrayList<Integer>();
 									ArrayList<Integer> inPorts = new ArrayList<Integer>();
-									inPorts.add(port+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
-									outPorts.add(port + this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+									inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
+									outPorts.add(port + CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 									Wildcard mask = new Wildcard(cHeader.getFormat().get("length"),'1');
 									Wildcard rewrite = new Wildcard(cHeader.getFormat().get("length"),'0');
 									//TODO why here 0 and vlan before
@@ -420,8 +428,8 @@ public class CiscoParser implements Parser{
 								// If sending out from an access port, strip the VLAN tag
 								ArrayList<Integer> outPorts = new ArrayList<Integer>();
 								ArrayList<Integer> inPorts = new ArrayList<Integer>();
-								inPorts.add(port+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
-								outPorts.add(port + this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+								inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
+								outPorts.add(port + CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 								if(!aclDicEntry.isAction()) {
 									outPorts.clear();
 								}
@@ -437,7 +445,7 @@ public class CiscoParser implements Parser{
 		//*** default rule for all vlans configured on this switch
 		HashSet<String> allAccessPorts = new HashSet<String>();
 		ArrayList<Integer> intermediatePort = new ArrayList<Integer>();
-		intermediatePort.add(this.switchID*this.SWITCH_ID_MULTIPLIER);
+		intermediatePort.add(this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER);
 		for(int cnfVlan:this.configedVlans.keySet()) {
 			if(!this.vlanSpanPorts.containsKey(cnfVlan)) {
 				continue;
@@ -485,8 +493,8 @@ public class CiscoParser implements Parser{
 				rewrite.setField(cHeader.getFormat(), "vlan", 0, 0);
 				ArrayList<Integer> beforeOutPort = new ArrayList<Integer>();
 				ArrayList<Integer> afterOutPort = new ArrayList<Integer>();
-				beforeOutPort.add(portID+ this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
-				afterOutPort.add(portID + this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+				beforeOutPort.add(portID+ CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
+				afterOutPort.add(portID + CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 				//defRule = new Rule(beforeOutPort, match, afterOutPort, mask, rewrite, "", new ArrayList<Integer>());
 				defRule = new Rule(beforeOutPort, match, afterOutPort, mask, rewrite);
 				tf.addRewriteRule(defRule);
@@ -499,8 +507,8 @@ public class CiscoParser implements Parser{
 				Wildcard match = new Wildcard(cHeader.getFormat().get("length"),'x');
 				ArrayList<Integer> beforeOutPort = new ArrayList<Integer>();
 				ArrayList<Integer> afterOutPort = new ArrayList<Integer>();
-				beforeOutPort.add(portID+this.PORT_TYPE_MULTIPLIER*this.INTERMEDIATE_PORT_TYPE_CONST);
-				afterOutPort.add(portID+this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+				beforeOutPort.add(portID+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
+				afterOutPort.add(portID+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 				//Rule defRule = new Rule(beforeOutPort, match, afterOutPort, null, null, "", new ArrayList<Integer>());
 				Rule defRule = new Rule(beforeOutPort, match, afterOutPort, null, null);
 				tf.addFwdRule(defRule);
@@ -540,7 +548,7 @@ public class CiscoParser implements Parser{
 					Wildcard rewrite = new Wildcard(cHeader.getFormat().get("length"),'0');
 					match.setField(cHeader.getFormat(), "ip_dst", fwdRule.getIP().getIP(), subnet);
 					ArrayList<Integer> inPorts = new ArrayList<Integer>();
-					inPorts.add(this.switchID*this.SWITCH_ID_MULTIPLIER);
+					inPorts.add(this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER);
 					//ArrayList<Integer> lines = new ArrayList<Integer>();
 					//lines.add(fwdRule.getLineCounter());
 					//String filename = fwdRule.getFileName();
@@ -557,7 +565,7 @@ public class CiscoParser implements Parser{
 						// sub-ports: port.vlan
 						if(m.length>1) {
 							if(this.portToID.containsKey(m[0])){
-								outPorts.add(portToID.get(m[0])+this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+								outPorts.add(portToID.get(m[0])+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 								vlan = Integer.parseInt(m[1]);
 							}else {
 								System.out.print("error: unrecognized port "+m[0]);
@@ -568,7 +576,7 @@ public class CiscoParser implements Parser{
 							if(this.vlanSpanPorts.containsKey(vlan)) {
 								ArrayList<String> portList = this.vlanSpanPorts.get(vlan);
 								for(String p: portList) {
-										outPorts.add(this.portToID.get(p)+this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+										outPorts.add(this.portToID.get(p)+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 								}
 							}else {
 								System.out.print("error: unrecognized vlan "+vlan);
@@ -576,7 +584,7 @@ public class CiscoParser implements Parser{
 							}
 						}else {//physical ports - no vlan taging
 							if(this.portToID.containsKey(fwdRule.getPort())) {
-								outPorts.add(this.portToID.get(fwdRule.getPort())+this.PORT_TYPE_MULTIPLIER*this.OUTPUT_PORT_TYPE_CONST);
+								outPorts.add(this.portToID.get(fwdRule.getPort())+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
 								vlan = 0;
 							}else {
 								System.out.print("error: unrecognized port "+fwdRule.getPort());
@@ -1003,7 +1011,7 @@ public class CiscoParser implements Parser{
 	}
 	
 	public Device generateDevice() {
-		return new RawDevice(this.portToID, this.tf);
+		return new RawDevice(this.switchID, this.portToID, this.tf);
 	}
 	
 	public static void main(String args[]) {

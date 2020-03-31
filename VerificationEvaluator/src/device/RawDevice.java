@@ -7,6 +7,7 @@ import bean.Node;
 import hassel.bean.HS;
 import hassel.bean.Wildcard;
 import interfaces.Device;
+import parser.CiscoParser;
 import rules.Influence;
 import rules.Rule;
 import tfFunction.tfFunction;
@@ -16,18 +17,17 @@ import tfFunction.tfFunction;
  * Device in raw topology network
  */
 public class RawDevice implements Device{
-	String deviceID = "";
-	ArrayList<String> iface = new ArrayList<String>();
-	HashMap<String, Integer> portToID = new HashMap<String, Integer>(); 
+	int deviceID = -1;
+	public HashMap<String, Integer> portToID = new HashMap<String, Integer>(); 
 	tfFunction tfFuncs = null;
+	CiscoParser parser = null;
 	public RawDevice() {	
 	}
-	public RawDevice(String deviceID, ArrayList<String> iface, tfFunction tfFuncs){
+	public RawDevice(int deviceID, tfFunction tfFuncs){
 		this.deviceID = deviceID;
-		this.iface = iface;
 		this.tfFuncs = tfFuncs;
 	}
-	public RawDevice(HashMap<String, Integer> portToID, tfFunction tfFuncs) {
+	public RawDevice(int deviceID, HashMap<String, Integer> portToID, tfFunction tfFuncs) {
 		this.portToID.putAll(portToID);
 		this.tfFuncs = tfFuncs;
 	}
@@ -37,16 +37,22 @@ public class RawDevice implements Device{
 	public void setPortToID(HashMap<String, Integer> portToID) {
 		this.portToID = portToID;
 	}
-	public ArrayList<String> getIface() {
-		return iface;
-	}
-	public void setIface(ArrayList<String> iface) {
-		this.iface = iface;
-	}
 	public tfFunction getTfFuncs() {
 		return tfFuncs;
 	}
 	public void setTfFuncs(tfFunction tfFuncs) {
 		this.tfFuncs = tfFuncs;
+	}
+	public int getDeviceID() {
+		return deviceID;
+	}
+	public void setDeviceID(int deviceID) {
+		this.deviceID = deviceID;
+	}
+	public CiscoParser getParser() {
+		return parser;
+	}
+	public void setParser(CiscoParser parser) {
+		this.parser = parser;
 	}
 }
