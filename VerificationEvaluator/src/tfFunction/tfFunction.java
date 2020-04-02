@@ -291,8 +291,8 @@ public class tfFunction{
 		System.out.println("===Generating Topology===");
 		int outPortAddition = Parser.PORT_TYPE_MULTIPLIER*Parser.OUTPUT_PORT_TYPE_CONST;
 		for(Link link:network.getLinks()) {
-			Parser fromRtr = parserList.get(link.getDevice1());
-			Parser toRtr = parserList.get(link.getDevice2());
+			Parser fromRtr = network.getRouters().get(link.getDevice1()).getParser();
+			Parser toRtr = network.getRouters().get(link.getDevice2()).getParser();
 			ArrayList<Integer> fromPorts = new ArrayList<Integer>();
 			ArrayList<Integer> toPorts = new ArrayList<Integer>();
 			fromPorts.add(fromRtr.get_port_id(link.getIface1())+outPortAddition);

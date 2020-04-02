@@ -94,6 +94,25 @@ public class Network{
 		this.routers.putAll(routers);
 		this.links.addAll(links);
 	}
+	
+	public tfFunction getNTF() {
+		return NTF;
+	}
+	public void setNTF(tfFunction nTF) {
+		NTF = nTF;
+	}
+	public tfFunction getTTF() {
+		return TTF;
+	}
+	public void setTTF(tfFunction tTF) {
+		TTF = tTF;
+	}
+	public String getConfigDict() {
+		return configDict;
+	}
+	public void setConfigDict(String configDict) {
+		this.configDict = configDict;
+	}
 	public HashMap<String, RawDevice> getRouters() {
 		return routers;
 	}

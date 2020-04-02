@@ -136,7 +136,12 @@ public class Wildcard{
 	}
 
 	public boolean isEmpty() {
-		return wcBit.isEmpty();
+		for(int i = 0; i< this.length;i++) {
+			if(wcBit.get(2*i)||wcBit.get(2*i+1)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public String getString() {

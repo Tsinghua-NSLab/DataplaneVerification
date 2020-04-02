@@ -8,7 +8,7 @@ import hassel.bean.HS;
 import tfFunction.tfFunction;
 
 public class applications{
-	public ArrayList<Node> findReachability(tfFunction NTF, tfFunction TTF, Node inputPkt, ArrayList<Integer> outPorts) {
+	public static ArrayList<Node> findReachability(tfFunction NTF, tfFunction TTF, Node inputPkt, ArrayList<Integer> outPorts) {
 		ArrayList<Node> paths = new ArrayList<Node>();
 		ArrayList<Node> propagation = new ArrayList<Node>();
 		Node pNode = new Node(inputPkt);

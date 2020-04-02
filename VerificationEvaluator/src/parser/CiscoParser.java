@@ -39,7 +39,7 @@ public class CiscoParser implements Parser{
 	ArrayList<FIB> fwdTable = new ArrayList<FIB>();
     HashMap<String, Arp> arpTable = new HashMap<String, Arp>();
     HashMap<String, ArrayList<String>> macTable = new HashMap<String, ArrayList<String>>();
-    HashMap<Integer, ArrayList<Access>> ACLIface = new HashMap<Integer, ArrayList<Access>>();
+    HashMap<String, ArrayList<Access>> ACLIface = new HashMap<String, ArrayList<Access>>();
     HashMap<Integer, Vlan> configedVlans = new HashMap<Integer, Vlan>();
     HashSet<String> configedPorts = new HashSet<String>();
     
@@ -316,7 +316,7 @@ public class CiscoParser implements Parser{
 	public void generate_transfer_function() {
 		System.out.println("=== Generating Transfer Function ===");
 		System.out.println(" * Generating ACL transfer function * ");
-		for(int acl: this.ACLIface.keySet()) {
+		for(String acl: this.ACLIface.keySet()) {
 			if(!this.ACLList.containsKey(acl)) {
 				continue;
 			}
@@ -733,7 +733,7 @@ public class CiscoParser implements Parser{
 				portMode = tempArrs[2];
 			}else if(tempLine.startsWith("ip access-group")) {
 				String[] tempArrs = tempLine.split("\\s+");
-				int groupNum = Integer.parseInt(tempArrs[2]);
+				String groupNum = tempArrs[2];
 				if(!ACLIface.containsKey(groupNum)) {
 					ACLIface.put(groupNum, new ArrayList<Access>());
 				}	
