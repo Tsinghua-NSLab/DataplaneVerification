@@ -2,7 +2,11 @@ package hassel.bean;
 
 import java.util.ArrayList;
 
-public class HS{
+import bean.basis.Ip;
+import interfaces.AbstractIP;
+import interfaces.Header;
+
+public class HS implements Header{
 	//hsList: list of all wildcards included
 	//hsDiff: a list of wildcard not included in the headerspace.
 	ArrayList<Wildcard> hsList = new ArrayList<Wildcard>();
@@ -39,39 +43,50 @@ public class HS{
 	public void setLength(int length) {
 		this.length = length;
 	}
-	public void addHS(Wildcard wc) {
+	@Override
+	public void setHeader(Ip ip) {
+		
+	}
+	public void add(Wildcard wc) {
 		if(wc.getLength()==this.length) {
 			this.hsList.add(new Wildcard(wc));
 		}else {
 			System.out.println("Wildcard length mismatch");
 		}
 	}
-	public void addHS(HS hs) {
-		if(hs.getLength()==this.length) {
-			for(Wildcard wc: hs.getHsList()) {
-				this.hsList.add(new Wildcard(wc));
-			}
-			for(ArrayList<Wildcard> wcList: hs.getHsDiff()) {
-				ArrayList<Wildcard> tempList = new ArrayList<Wildcard>();
-				for(Wildcard wc: wcList) {
-					tempList.add(new Wildcard(wc));
+	
+	@Override
+	public void add(Header header) {
+		if(header.getClass().getName()=="hassel.bean.HS") {
+			HS hs = (HS)header;
+			if(hs.getLength()==this.length) {
+				for(Wildcard wc: hs.getHsList()) {
+					this.hsList.add(new Wildcard(wc));
 				}
-				this.hsDiff.add(tempList);
+				for(ArrayList<Wildcard> wcList: hs.getHsDiff()) {
+					ArrayList<Wildcard> tempList = new ArrayList<Wildcard>();
+					for(Wildcard wc: wcList) {
+						tempList.add(new Wildcard(wc));
+					}
+					this.hsDiff.add(tempList);
+				}
+			}else {
+				System.out.println("HS length mismatch");
 			}
 		}else {
-			System.out.println("HS length mismatch");
+			System.out.println("HS add operation type unmatched.");
 		}
 	}
 	
-	public void addHsList(ArrayList<HS> hses) {
-		for(HS hs: hses) {
-			this.addHS(hs);
+	public void addHsList(ArrayList<Header> hses) {
+		for(Header hs: hses) {
+			this.add(hs);
 		}
 	}
 	
 	public void addWcList(ArrayList<Wildcard> hses) {
 		for(Wildcard hs: hses) {
-			this.addHS(hs);
+			this.add(hs);
 		}
 	}
 	
@@ -112,7 +127,8 @@ public class HS{
 		return total;
 	}
 	
-	public HS copy() {
+	@Override
+	public Header copy() {
 		HS deepCopy = new HS(this.length);
 		for(int i = 0; i < this.hsList.size(); i++) {
 			deepCopy.getHsList().add(new Wildcard(this.getHsList().get(i)));
@@ -126,6 +142,7 @@ public class HS{
 		return deepCopy;
 	}
 	
+	@Override
 	public String toString() {
 		String result = "";
 		ArrayList<String> strings = new ArrayList<String>();
@@ -142,40 +159,44 @@ public class HS{
 		return result;
 	}
 	
-	public void and(HS other) {
-		if(this.length != other.getLength()) {
-			System.out.println("HS length mismatch");
-			return;
-		}
-		ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
-		ArrayList<ArrayList<Wildcard>> newHSDiff = new ArrayList<ArrayList<Wildcard>>();
-		for(int i = 0; i< this.hsList.size(); i++) {
-			for(int j = 0; j < other.hsList.size(); j++) {
-				Wildcard isect = new Wildcard(this.hsList.get(i));
-				isect.and(other.getHsList().get(j));
-				if(!isect.isEmpty()) {
-					newHSList.add(isect);
-					ArrayList<Wildcard> diffs = new ArrayList<Wildcard>();
-					for(Wildcard diffHS:this.hsDiff.get(i)) {
-						Wildcard diffIsect = new Wildcard(isect);
-						diffIsect.and(diffHS);
-						if(!diffIsect.isEmpty()) {
-							diffs.add(diffIsect);
+	@Override
+	public void and(Header header) {
+		if(header.getClass().getName()=="hassel.bean.HS") {
+			HS other = (HS)header;
+			if(this.length != other.getLength()) {
+				System.out.println("HS length mismatch");
+				return;
+			}
+			ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
+			ArrayList<ArrayList<Wildcard>> newHSDiff = new ArrayList<ArrayList<Wildcard>>();
+			for(int i = 0; i< this.hsList.size(); i++) {
+				for(int j = 0; j < other.hsList.size(); j++) {
+					Wildcard isect = new Wildcard(this.hsList.get(i));
+					isect.and(other.getHsList().get(j));
+					if(!isect.isEmpty()) {
+						newHSList.add(isect);
+						ArrayList<Wildcard> diffs = new ArrayList<Wildcard>();
+						for(Wildcard diffHS:this.hsDiff.get(i)) {
+							Wildcard diffIsect = new Wildcard(isect);
+							diffIsect.and(diffHS);
+							if(!diffIsect.isEmpty()) {
+								diffs.add(diffIsect);
+							}
 						}
-					}
-					for(Wildcard diffHS:other.hsDiff.get(j)) {
-						Wildcard diffIsect = new Wildcard(isect);
-						diffIsect.and(diffHS);
-						if(!diffIsect.isEmpty()) {
-							diffs.add(diffIsect);
+						for(Wildcard diffHS:other.hsDiff.get(j)) {
+							Wildcard diffIsect = new Wildcard(isect);
+							diffIsect.and(diffHS);
+							if(!diffIsect.isEmpty()) {
+								diffs.add(diffIsect);
+							}
 						}
+						newHSDiff.add(diffs);
 					}
-					newHSDiff.add(diffs);
 				}
 			}
+			this.hsList = newHSList;
+			this.hsDiff = newHSDiff;
 		}
-		this.hsList = newHSList;
-		this.hsDiff = newHSDiff;
 	}
 	
 	public void and(Wildcard wc) {
@@ -203,19 +224,19 @@ public class HS{
 		this.hsList = newHSList;
 		this.hsDiff = newHSDiff;
 	}
-	
-	public HS copyAnd(HS other) {
-		HS cpy = this.copy();
+	@Override
+	public Header copyAnd(Header other) {
+		Header cpy = this.copy();
 		cpy.and(other);
 		return cpy;
 	}
 	
 	public HS copyAnd(Wildcard other) {
-		HS cpy = this.copy();
+		HS cpy = (HS)this.copy();
 		cpy.and(other);
 		return cpy;
 	}
-	
+	@Override
 	public void complement() {
 		HS result = null;
 		//if empty, make it all x
@@ -226,7 +247,7 @@ public class HS{
 			ArrayList<HS> cHSList = new ArrayList<HS>();
 			for(int i = 0; i< this.hsList.size(); i++) {
 				HS tmp = new HS(this.length);
-				ArrayList<Wildcard> cSet = this.getHsList().get(i).complement();
+				ArrayList<AbstractIP> cSet = this.getHsList().get(i).complement();
 				tmp.addWcList(cSet);
 				tmp.addWcList(this.getHsDiff().get(i));
 				cHSList.add(tmp);
@@ -239,21 +260,21 @@ public class HS{
 		this.hsList = result.getHsList();
 		this.hsDiff = result.getHsDiff();
 	}
-	
-	public HS copyComplement() {
-		HS cpy = this.copy();
+	@Override
+	public Header copyComplement() {
+		Header cpy = this.copy();
 		cpy.complement();
 		return cpy;
 	}
-	
-	public void minus(HS other) {
-		HS cpy = other.copyComplement();
+	@Override
+	public void minus(Header other) {
+		Header cpy = other.copyComplement();
 		this.and(cpy);
 		this.cleanUp();
 	}
-	
-	public HS copyMinus(HS other) {
-		HS cpy = this.copy();
+	@Override
+	public Header copyMinus(Header other) {
+		Header cpy = this.copy();
 		cpy.minus(other);
 		return cpy;
 	}
@@ -265,7 +286,7 @@ public class HS{
 		ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
 		for(int i = 0; i< this.getHsList().size();i++) {
 			HS incs = new HS(this.length);
-			incs.addHS(this.getHsList().get(i));
+			incs.add(this.getHsList().get(i));
 			HS difs = new HS(this.length); 
 			difs.addWcList(this.getHsDiff().get(i));
 			incs.minus(difs);
@@ -275,7 +296,7 @@ public class HS{
 		this.hsList.clear();
 		this.addWcList(newHSList);
 	}
-	
+	@Override
 	public boolean isEmpty() {
 		return this.getHsList().size() == 0;
 	}
@@ -284,8 +305,9 @@ public class HS{
 	 * mathmatically
 	 * @return
 	 */
-	public boolean isSubsetOf(HS other) {
-		HS cpy = this.copy();
+	@Override
+	public boolean isSubsetOf(Header other) {
+		HS cpy = (HS)this.copy();
 		cpy.minus(other);
 		cpy.selfDiff();
 		return cpy.isEmpty();

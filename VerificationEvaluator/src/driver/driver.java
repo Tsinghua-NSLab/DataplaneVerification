@@ -12,6 +12,15 @@ public class driver{
 	public void init() {
 		network.initStanford();
 	}
+	/**
+	 * This function describes abstract verification procedure  
+	 *
+	public void testmain() {
+		network.initRouterList();
+		network.readFiles();
+		network.
+	}
+	 */
 	public static void main(String args[]) {
 		driver test = new driver();
 		test.init();

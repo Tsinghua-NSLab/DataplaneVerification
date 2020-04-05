@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 
-public class Wildcard{
+import interfaces.AbstractIP;
+
+public class Wildcard implements AbstractIP{
 	int length = 0;
 	BitSet wcBit = new BitSet();
 	
@@ -65,10 +67,12 @@ public class Wildcard{
 		}
 	}
 	
+	@Override
 	public void setMask(int rightMask) {
 		wcBit.set(2*(length-rightMask), 2*length);
 	}
 	
+	@Override
 	public void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask) {
 		//TODO need test
 		int fieldLength = hsFormat.get(field+"_len");
@@ -81,50 +85,74 @@ public class Wildcard{
 		wcBit.set(2*(startPos+fieldLength-rightMask), 2*(startPos+fieldLength));
 	}
 	
-	public void and(Wildcard other) {
-		if(this.length == other.length) {
-			this.wcBit.and(other.wcBit);
+	@Override
+	public void and(AbstractIP other) {
+		if(other.getClass().getName()=="hassel.bean.Wildcard") {
+			Wildcard otherWC = (Wildcard)other;
+			if(this.length == otherWC.length) {
+				this.wcBit.and(otherWC.wcBit);
+			}else {
+				System.out.println("Error: length mismatch");
+			}
 		}else {
-			System.out.println("Error: length mismatch");
+			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + other.getClass().getName());
 		}
 	}
 	
-	public void or(Wildcard other) {
-		if(this.length == other.length) {
-			this.wcBit.or(other.wcBit);
+	@Override
+	public void or(AbstractIP other) {
+		if(other.getClass().getName()=="hassel.bean.Wildcard") {
+			Wildcard otherWC = (Wildcard)other;
+			if(this.length == otherWC.length) {
+				this.wcBit.or(otherWC.wcBit);
+			}else {
+				System.out.println("Error: length mismatch");
+			}
 		}else {
-			System.out.println("Error: length mismatch");
+			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + other.getClass().getName());
 		}
 	}
 	
-	public void xor(Wildcard other) {
-		if(this.length == other.length) {
-			this.wcBit.xor(other.getWcBit());
+	@Override
+	public void xor(AbstractIP other) {
+		if(other.getClass().getName()=="hassel.bean.Wildcard") {
+			Wildcard otherWC = (Wildcard)other;
+			if(this.length == otherWC.length) {
+				this.wcBit.xor(otherWC.getWcBit());
+			}else {
+				System.out.println("Error: length mismatch");
+			}
 		}else {
-			System.out.println("Error: length mismatch");
+			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + other.getClass().getName());
 		}
 	}
 	
+	@Override
 	public void not() {
 		this.wcBit.flip(0, length);
 	}
 	
-	public boolean equals(Wildcard other) {
+	@Override
+	public boolean equals(AbstractIP other) {
 		Wildcard tmp = new Wildcard(this);
 		tmp.xor(other);
 		return tmp.isEmpty();
 	}
 	
-	public boolean contains(Wildcard other) {
+	@Override
+	public boolean contains(AbstractIP other) {
 		Wildcard tmp = new Wildcard(this);
 		tmp.and(other);
 		tmp.xor(other);
 		return tmp.isEmpty();
 	}
 	
+	@Override
 	public int getLength() {
 		return length;
 	}
+	
+	@Override
 	public void setLength(int length) {
 		this.length = length;
 	}
@@ -134,7 +162,8 @@ public class Wildcard{
 	public void setWcBit(BitSet wcBit) {
 		this.wcBit = wcBit;
 	}
-
+	
+	@Override
 	public boolean isEmpty() {
 		for(int i = 0; i< this.length;i++) {
 			if(wcBit.get(2*i)||wcBit.get(2*i+1)) {
@@ -144,6 +173,7 @@ public class Wildcard{
 		return false;
 	}
 	
+	@Override
 	public String getString() {
 		String result = "";
 		for(int i = 0; i < this.length; i++) {
@@ -164,8 +194,9 @@ public class Wildcard{
 		return result;
 	}
 	
-	public ArrayList<Wildcard> complement(){
-		ArrayList<Wildcard> result = new ArrayList<Wildcard>();
+	@Override
+	public ArrayList<AbstractIP> complement(){
+		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
 		for(int i = 0; i < this.length;i++) {
 			if(this.getWcBit().get(2*length)) {
 				if(this.getWcBit().get(2*length+1)) {
@@ -179,7 +210,7 @@ public class Wildcard{
 					Wildcard tmp = new Wildcard(this.length, 'x');
 					tmp.getWcBit().clear(2*length+1);
 				}else {
-					result = new ArrayList<Wildcard>();
+					result = new ArrayList<AbstractIP>();
 					result.add(new Wildcard(this.length,'x'));
 				}
 			}
@@ -187,36 +218,44 @@ public class Wildcard{
 		return result;
 	}
 	
-	public int rewrite(Wildcard mask, Wildcard rewrite) {
-		int result = 0;
-		BitSet tmp1 = new BitSet();
-		tmp1.or(wcBit);
-		BitSet tmp2 = new BitSet();
-		tmp2.or(wcBit);
-		BitSet oddMask = new BitSet();
-		BitSet evenMask = new BitSet();
-		for(int i = 0; i < length; i++) {
-			evenMask.set(2*i+1);
-		}
-		oddMask.set(0, 2*length);
-		oddMask.xor(evenMask);
-		tmp1.or(mask.getWcBit());
-		tmp1.and(rewrite.getWcBit());
-		tmp1.and(oddMask);
-		tmp2.and(mask.getWcBit());
-		tmp2.or(mask.getWcBit());
-		tmp2.and(evenMask);
-		tmp1.or(tmp2);
-		wcBit=tmp1;
-		for(int i = 0; i<length;i++) {
-			if(wcBit.get(2*i)&&wcBit.get(2*i+1)) {
-				result++;
+	@Override
+	public int rewrite(AbstractIP mask, AbstractIP rewrite) {
+		if(mask.getClass().getName()=="hassel.bean.Wildcard"&&rewrite.getClass().getName()=="hassel.bean.Wildcard") {
+			Wildcard maskWC = (Wildcard)mask;
+			Wildcard rewriteWC = (Wildcard)rewrite;
+			int result = 0;
+			BitSet tmp1 = new BitSet();
+			tmp1.or(wcBit);
+			BitSet tmp2 = new BitSet();
+			tmp2.or(wcBit);
+			BitSet oddMask = new BitSet();
+			BitSet evenMask = new BitSet();
+			for(int i = 0; i < length; i++) {
+				evenMask.set(2*i+1);
 			}
+			oddMask.set(0, 2*length);
+			oddMask.xor(evenMask);
+			tmp1.or(maskWC.getWcBit());
+			tmp1.and(rewriteWC.getWcBit());
+			tmp1.and(oddMask);
+			tmp2.and(maskWC.getWcBit());
+			tmp2.or(maskWC.getWcBit());
+			tmp2.and(evenMask);
+			tmp1.or(tmp2);
+			wcBit=tmp1;
+			for(int i = 0; i<length;i++) {
+				if(wcBit.get(2*i)&&wcBit.get(2*i+1)) {
+				result++;
+				}
+			}
+			return result;
+		}else {
+			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + mask.getClass().getName() +","+ rewrite.getClass().getName());
 		}
-		return result;
+		return -1;
 	}
 	
-	public static ArrayList<Wildcard> compressWildCardList(ArrayList<Wildcard> l) {
+	/*public static ArrayList<Wildcard> compressWildCardList(ArrayList<Wildcard> l) {
 		ArrayList<Integer> popIndex = new ArrayList<Integer>();
 		for(int i = 0; i< l.size(); i++) {
 			for(int j = i+1; j < l.size(); j++) {
@@ -235,10 +274,11 @@ public class Wildcard{
 			}
 		}
 		return result;
-	}
+	}*/
 	
 	public static void main(String[] args) {
 		Wildcard test = new Wildcard("10101010");
-		System.out.println(test);
+		String testClass = test.getClass().getName();
+		System.out.println(test.getClass().toString());
 	}
 }

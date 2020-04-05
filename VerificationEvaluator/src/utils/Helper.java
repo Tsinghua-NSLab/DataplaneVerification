@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.regex.*;
 
 import bean.FIB;
-import bean.Ip;
 import bean.Subnet;
+import bean.basis.Ip;
 
 public class Helper{
 	public static boolean is_ip_address(String str) {

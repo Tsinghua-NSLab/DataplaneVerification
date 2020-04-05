@@ -16,5 +16,5 @@ public interface Parser{
 	void read_route_file(String filename);
 	void generate_port_ids(HashSet<String> additionalPorts);
 	void optimize_forwarding_table();
-	void generate_transfer_function();
+	void generate_transfer_function(TransferFunc tf);
 }

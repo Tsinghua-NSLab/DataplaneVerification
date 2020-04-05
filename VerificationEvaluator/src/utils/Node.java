@@ -3,7 +3,7 @@ package utils;
 import java.util.ArrayList;
 
 import bean.FIB;
-import bean.Ip;
+import bean.basis.Ip;
 
 public class Node{
 	Node zero = null;

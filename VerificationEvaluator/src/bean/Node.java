@@ -2,15 +2,16 @@ package bean;
 
 import java.util.ArrayList;
 
-import hassel.bean.HS;
+import interfaces.Header;
+
 
 public class Node {
-	HS hdr = null;
+	Header hdr = null;
 	String deviceName;
 	int port = -1;
 	boolean isOut;
 	ArrayList<Integer> visits = new ArrayList<Integer>();
-	ArrayList<HS> hsHistory = new ArrayList<HS>();
+	ArrayList<Header> hsHistory = new ArrayList<Header>();
 	
 	public Node() {
 	}
@@ -20,15 +21,15 @@ public class Node {
 		this.port = node.getPort();
 	}
 	
-	public Node(HS hdr, int port) {
+	public Node(Header hdr, int port) {
 		this.hdr = hdr.copy();
 		this.port = port;
 	}
 	
-	public HS getHdr() {
+	public Header getHdr() {
 		return hdr;
 	}
-	public void setHdr(HS hdr) {
+	public void setHdr(Header hdr) {
 		this.hdr = hdr;
 	}
 	public int getPort() {
@@ -43,10 +44,10 @@ public class Node {
 	public void setVisits(ArrayList<Integer> visits) {
 		this.visits = visits;
 	}
-	public ArrayList<HS> getHsHistory() {
+	public ArrayList<Header> getHsHistory() {
 		return hsHistory;
 	}
-	public void setHsHistory(ArrayList<HS> hsHistory) {
+	public void setHsHistory(ArrayList<Header> hsHistory) {
 		this.hsHistory = hsHistory;
 	}
 	public void printSelf() {

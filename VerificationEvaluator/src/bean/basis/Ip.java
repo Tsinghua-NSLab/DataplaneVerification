@@ -1,4 +1,4 @@
-package bean;
+package bean.basis;
 
 public class Ip{
 	int IP = -1;

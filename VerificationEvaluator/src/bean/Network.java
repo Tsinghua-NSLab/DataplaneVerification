@@ -38,7 +38,6 @@ public class Network{
 		for(String rtrName: this.getRouters().keySet()) {
 			System.out.println("\n--- initializing " + rtrName + " ---");
 			this.getRouters().get(rtrName).setParser(new CiscoParser(this.getRouters().get(rtrName).getDeviceID()));
-			this.getRouters().get(rtrName).getParser().setTF(NTF);
 			this.getRouters().get(rtrName).getParser().read_arp_table_file("examples\\"+rtrName+"_arp_table.txt");
 			this.getRouters().get(rtrName).getParser().read_mac_table_file("examples\\"+rtrName+"_mac_table.txt");
 			this.getRouters().get(rtrName).getParser().read_config_file("examples\\"+rtrName+"_config.txt");
@@ -46,7 +45,7 @@ public class Network{
 			this.getRouters().get(rtrName).getParser().read_route_file("examples\\"+rtrName+"_route.txt");
 			this.getRouters().get(rtrName).getParser().optimize_forwarding_table();
 			this.getRouters().get(rtrName).getParser().generate_port_ids(new HashSet<String>());
-			this.getRouters().get(rtrName).getParser().generate_transfer_function();
+			this.getRouters().get(rtrName).getParser().generate_transfer_function(NTF);
 		}
 		//Add links
 		this.getLinks().add(new Link("bbra_rtr","te7/3","goza_rtr","te2/1"));

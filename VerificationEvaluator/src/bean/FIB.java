@@ -2,6 +2,8 @@ package bean;
 
 import java.util.ArrayList;
 
+import bean.basis.Ip;
+
 public class FIB{
 	Ip ip;
 	String port;

@@ -9,7 +9,6 @@ import hassel.bean.Wildcard;
 import interfaces.Device;
 import parser.CiscoParser;
 import rules.Influence;
-import rules.Rule;
 import tfFunction.tfFunction;
 
 /**

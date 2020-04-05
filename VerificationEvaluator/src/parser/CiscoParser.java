@@ -14,25 +14,21 @@ import bean.ACL;
 import bean.Access;
 import bean.Arp;
 import bean.FIB;
-import bean.Ip;
 import bean.Port;
 import bean.Subnet;
 import bean.Vlan;
+import bean.basis.Ip;
 import device.RawDevice;
 import hassel.bean.Wildcard;
 import headers.ciscoHeader;
 import interfaces.Device;
 import interfaces.Parser;
+import interfaces.TransferFunc;
 import rules.Rule;
 import tfFunction.tfFunction;
 import utils.Helper;
 
 public class CiscoParser implements Parser{
-	static int PORT_ID_MULTIPLIER = 1;
-	static int INTERMEDIATE_PORT_TYPE_CONST = 1;
-	static int OUTPUT_PORT_TYPE_CONST = 2;
-	static int PORT_TYPE_MULTIPLIER = 10000;
-	static int SWITCH_ID_MULTIPLIER = 100000;
 	
 	HashMap<Integer, ArrayList<ACL>> ACLList = new HashMap<Integer, ArrayList<ACL>>();
     HashMap<Integer, ArrayList<String>> vlanSpanPorts = new HashMap<Integer, ArrayList<String>>();
@@ -48,20 +44,20 @@ public class CiscoParser implements Parser{
     int defVlan = 1;
     //TODO remove temp instances
     ciscoHeader cHeader = new ciscoHeader();
-    tfFunction tf = null;
+    //tfFunction tf = null;
     
     public CiscoParser(int switchID) {
 		super();
 		this.switchID = switchID;
 	}
     
-    public void setTF(tfFunction NTF) {
-    	this.tf = NTF;
-    }
+    //public void setTF(tfFunction NTF) {
+    //	this.tf = NTF;
+    //}
     
-    public tfFunction getTF() {
-    	return this.tf;
-    }
+    //public tfFunction getTF() {
+    //	return this.tf;
+    //}
     
     public void setDefaultVlan(int vlan) {
     	this.defVlan = vlan;
@@ -313,7 +309,7 @@ public class CiscoParser implements Parser{
 		return -1;
 	}
 	
-	public void generate_transfer_function() {
+	public void generate_transfer_function(TransferFunc tf) {
 		System.out.println("=== Generating Transfer Function ===");
 		System.out.println(" * Generating ACL transfer function * ");
 		for(String acl: this.ACLIface.keySet()) {
@@ -1010,9 +1006,9 @@ public class CiscoParser implements Parser{
 		return result;
 	}
 	
-	public Device generateDevice() {
-		return new RawDevice(this.switchID, this.portToID, this.tf);
-	}
+	//public Device generateDevice() {
+	//	return new RawDevice(this.switchID, this.portToID, this.tf);
+	//}
 	
 	public static void main(String args[]) {
 		CiscoParser cp = new CiscoParser(1);
@@ -1023,7 +1019,7 @@ public class CiscoParser implements Parser{
 		cp.read_route_file("examples\\yoza_rtr_route.txt");
 		cp.optimize_forwarding_table();
 		cp.generate_port_ids(new HashSet<String>());
-		cp.generate_transfer_function();
+//		cp.generate_transfer_function();
 		System.out.println(cp.get_transport_port_number("syslog"));
 	}
 }

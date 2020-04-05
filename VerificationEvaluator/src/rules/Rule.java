@@ -2,17 +2,18 @@ package rules;
 
 import java.util.ArrayList;
 
-import hassel.bean.Wildcard;
+import factory.AbstractIPFactory;
+import interfaces.AbstractIP;
 
 public class Rule{
 	String id = null;
 	ArrayList<Integer> inPorts = new ArrayList<Integer>();
 	ArrayList<Integer> outPorts = new ArrayList<Integer>();
-	Wildcard match = null;
-	Wildcard mask = null;
-	Wildcard rewrite = null;
-	Wildcard inverseMatch = null;
-	Wildcard inverseRewrite = null;
+	AbstractIP match = null;
+	AbstractIP mask = null;
+	AbstractIP rewrite = null;
+	AbstractIP inverseMatch = null;
+	AbstractIP inverseRewrite = null;
 	//String filename = "";
 	String Action = "";
 	//ArrayList<Integer> lines = new ArrayList<Integer>();
@@ -24,17 +25,17 @@ public class Rule{
 	}
 	
 	//public Rule(ArrayList<Integer> inPorts, Wildcard match, ArrayList<Integer> outPorts, Wildcard mask, Wildcard rewrite, String filename, ArrayList<Integer> lines) {
-	public Rule(ArrayList<Integer> inPorts, Wildcard match, ArrayList<Integer> outPorts, Wildcard mask, Wildcard rewrite) {
+	public Rule(ArrayList<Integer> inPorts, AbstractIP match, ArrayList<Integer> outPorts, AbstractIP mask, AbstractIP rewrite) {
 		this.inPorts.addAll(inPorts);
 		this.outPorts.addAll(outPorts);
 		if(match != null) {
-			this.match = new Wildcard(match);
+			this.match = AbstractIPFactory.generateAbstractIP(match);
 		}
 		if(mask != null) {
-			this.mask = new Wildcard(mask);
+			this.mask = AbstractIPFactory.generateAbstractIP(mask);
 		}
 		if(rewrite != null) {
-			this.rewrite = new Wildcard(rewrite);
+			this.rewrite = AbstractIPFactory.generateAbstractIP(rewrite);
 		}
 	//	this.filename = filename;
 	//	this.lines.addAll(lines);
@@ -58,43 +59,43 @@ public class Rule{
 		this.outPorts = outPorts;
 	}
 
-	public Wildcard getMatch() {
+	public AbstractIP getMatch() {
 		return match;
 	}
 
-	public void setMatch(Wildcard match) {
+	public void setMatch(AbstractIP match) {
 		this.match = match;
 	}
 
-	public Wildcard getMask() {
+	public AbstractIP getMask() {
 		return mask;
 	}
 
-	public void setMask(Wildcard mask) {
+	public void setMask(AbstractIP mask) {
 		this.mask = mask;
 	}
 
-	public Wildcard getRewrite() {
+	public AbstractIP getRewrite() {
 		return rewrite;
 	}
 
-	public void setRewrite(Wildcard rewrite) {
+	public void setRewrite(AbstractIP rewrite) {
 		this.rewrite = rewrite;
 	}
 
-	public Wildcard getInverseMatch() {
+	public AbstractIP getInverseMatch() {
 		return inverseMatch;
 	}
 
-	public void setInverseMatch(Wildcard inverseMatch) {
+	public void setInverseMatch(AbstractIP inverseMatch) {
 		this.inverseMatch = inverseMatch;
 	}
 
-	public Wildcard getInverseRewrite() {
+	public AbstractIP getInverseRewrite() {
 		return inverseRewrite;
 	}
 
-	public void setInverseRewrite(Wildcard inverseRewrite) {
+	public void setInverseRewrite(AbstractIP inverseRewrite) {
 		this.inverseRewrite = inverseRewrite;
 	}
 

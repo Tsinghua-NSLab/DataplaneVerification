@@ -6,13 +6,15 @@ import java.util.HashMap;
 import bean.Link;
 import bean.Network;
 import bean.Node;
-import hassel.bean.HS;
-import hassel.bean.Wildcard;
+//import hassel.bean.HS;
+//import hassel.bean.Wildcard;
+import interfaces.Header;
 import interfaces.Parser;
+import interfaces.TransferFunc;
 import rules.Influence;
 import rules.Rule;
 
-public class tfFunction{
+public class tfFunction implements TransferFunc{
 	
 	int nextID = 0;
 	String prefixID = "";
@@ -21,9 +23,15 @@ public class tfFunction{
 	HashMap<Integer, ArrayList<Rule>> inportToRule= new HashMap<Integer, ArrayList<Rule>>();
 	HashMap<Integer, ArrayList<Rule>> outportToRule= new HashMap<Integer, ArrayList<Rule>>();
 	HashMap<String, Rule> idToRule = new HashMap<String,Rule>();
+	HashMap<String, ArrayList<Influence>> idToAffectedBy = new HashMap<String, ArrayList<Influence>>();
+	HashMap<String, ArrayList<Rule>> idToInfluenceOn = new HashMap<String, ArrayList<Rule>>();
 	boolean hashTableActive = false;
 	boolean sendOnReceivingPort = false;
 	
+	/**
+	 * Generate Rule ID
+	 * @return
+	 */
 	public String generateNextID() {
 		nextID++;
 		return prefixID+nextID;
@@ -51,7 +59,7 @@ public class tfFunction{
 	}
 	public void addRewriteRule(Rule rule, int position) {
 		//Mask rewrite
-		Wildcard temp = new Wildcard(rule.getMask());
+		AbstractIP temp = new Wildcard(rule.getMask());
 		temp.not();
 		rule.getRewrite().and(temp);
 		rule.setAction("rw");
@@ -249,9 +257,9 @@ public class tfFunction{
 		ArrayList<Rule> ruleSet = new ArrayList<Rule>();
 		
 		if(this.hashTableActive) {
-			for(Wildcard w: node.getHdr().getHsList()) {
+			//for(Wildcard w: node.getHdr().getHsList()) {
 				//TODO implement hash table
-			}
+			//}
 		}else {
 			ruleSet = this.getRulesForInport(node.getPort());
 		}
