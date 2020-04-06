@@ -1,6 +1,10 @@
 package interfaces;
 
-import rules.Rule;
+import java.util.ArrayList;
+
+import bean.Network;
+import bean.basis.Node;
+import bean.basis.Rule;
 
 public interface TransferFunc{
 	void addFwdRule(Rule rule);
@@ -9,5 +13,7 @@ public interface TransferFunc{
 	void addRewriteRule(Rule rule, int position);
 	void addLinkRule(Rule rule);
 	void addLinkRule(Rule rule, int position);
+	void writeTopology(Network network);
 	
+	ArrayList<Node> T(Node node);
 }

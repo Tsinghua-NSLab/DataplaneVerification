@@ -3,13 +3,13 @@ package device;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import bean.Node;
+import bean.basis.Node;
 import hassel.bean.HS;
 import hassel.bean.Wildcard;
 import interfaces.Device;
 import parser.CiscoParser;
-import rules.Influence;
-import tfFunction.tfFunction;
+import hassel.bean.Influence;
+import hassel.bean.tfFunction;
 
 /**
  * @author skingFD

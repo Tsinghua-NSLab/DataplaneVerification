@@ -1,18 +1,19 @@
-package tfFunction;
+package hassel.bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import bean.Link;
 import bean.Network;
-import bean.Node;
+import bean.basis.Node;
+import bean.basis.Rule;
+import factory.AbstractIPFactory;
+import interfaces.AbstractIP;
 //import hassel.bean.HS;
 //import hassel.bean.Wildcard;
 import interfaces.Header;
 import interfaces.Parser;
 import interfaces.TransferFunc;
-import rules.Influence;
-import rules.Rule;
 
 public class tfFunction implements TransferFunc{
 	
@@ -59,15 +60,15 @@ public class tfFunction implements TransferFunc{
 	}
 	public void addRewriteRule(Rule rule, int position) {
 		//Mask rewrite
-		AbstractIP temp = new Wildcard(rule.getMask());
+		AbstractIP temp = AbstractIPFactory.generateAbstractIP(rule.getMask());
 		temp.not();
 		rule.getRewrite().and(temp);
 		rule.setAction("rw");
 		//Finding inverse
-		rule.setInverseMatch(new Wildcard(rule.getMask()));
+		rule.setInverseMatch(AbstractIPFactory.generateAbstractIP(rule.getMask()));
 		rule.getInverseMatch().and(rule.getMatch());
 		rule.getInverseMatch().or(rule.getRewrite());
-		rule.setInverseRewrite(new Wildcard(rule.getMask()));
+		rule.setInverseRewrite(AbstractIPFactory.generateAbstractIP(rule.getMask()));
 		rule.getInverseRewrite().not();
 		rule.getInverseRewrite().and(rule.getMatch());
 		//Setting up id
@@ -110,11 +111,13 @@ public class tfFunction implements TransferFunc{
 					if(rules.get(i).getInPorts().contains(inPort));
 					commonPorts.add(inPort);
 				}
-				Wildcard intersect = new Wildcard(rules.get(i).getMatch());
+				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
-					newRule.getAffectedBy().add(new Influence(rules.get(i),intersect,commonPorts));
-					rules.get(i).getInfluenceOn().add(rules.get(position));
+					this.idToAffectedBy.get(newRule.getId()).add(new Influence(rules.get(i),intersect,commonPorts));
+					this.idToInfluenceOn.get(rules.get(i).getId()).add(rules.get(position));
+					//newRule.getAffectedBy().add(new Influence(rules.get(i),intersect,commonPorts));
+					//rules.get(i).getInfluenceOn().add(rules.get(position));
 				}
 			}
 		}
@@ -125,11 +128,13 @@ public class tfFunction implements TransferFunc{
 					if(rules.get(i).getInPorts().contains(inPort));
 					commonPorts.add(inPort);
 				}
-				Wildcard intersect = new Wildcard(rules.get(i).getMatch());
+				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
-					newRule.getInfluenceOn().add(rules.get(i));
-					rules.get(i).getAffectedBy().add(new Influence(rules.get(position),intersect,commonPorts));
+					this.idToInfluenceOn.get(newRule.getId()).add(rules.get(i));
+					this.idToAffectedBy.get(rules.get(i).getId()).add(new Influence(rules.get(position),intersect,commonPorts));
+					//newRule.getInfluenceOn().add(rules.get(i));
+					//rules.get(i).getAffectedBy().add(new Influence(rules.get(position),intersect,commonPorts));
 				}
 			}
 		}
@@ -172,9 +177,9 @@ public class tfFunction implements TransferFunc{
 			return result;
 		}
 		//check if match pattern matches and port is in in_ports.
-		HS newHS = input.getHdr().copyAnd(rule.getMatch());
+		Header newHS = input.getHdr().copyAnd(rule.getMatch());
 		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
-			for(Influence inf:rule.getAffectedBy()) {
+			for(Influence inf:this.idToAffectedBy.get(rule.getId())) {
 				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
 					newHS.diffHS(inf.getIntersect());
 				}
@@ -184,7 +189,7 @@ public class tfFunction implements TransferFunc{
 			for(int i = 0; i<newHS.getHsList().size();i++) {
 				//TODO how rewrite? tf.py line 461
 				int card = newHS.getHsList().get(i).rewrite(rule.getMask(), rule.getRewrite());
-				ArrayList<Wildcard> newDiffList = new ArrayList<Wildcard>();
+				ArrayList<AbstractIP> newDiffList = new ArrayList<AbstractIP>();
 				for(int j = 0; j<newHS.getHsDiff().get(i).size();j++) {
 					int diffCard = newHS.getHsDiff().get(i).get(j).rewrite(rule.getMask(), rule.getRewrite());
 					if(diffCard==card) {
@@ -218,9 +223,9 @@ public class tfFunction implements TransferFunc{
 			return result;
 		}
 		//check if match pattern matches and port is in in_ports.
-		HS newHS = input.getHdr().copyAnd(rule.getMatch());
+		Header newHS = input.getHdr().copyAnd(rule.getMatch());
 		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
-			for(Influence inf:rule.getAffectedBy()) {
+			for(Influence inf:this.idToAffectedBy.get(rule.getId())) {
 				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
 					newHS.diffHS(inf.getIntersect());
 				}
@@ -242,7 +247,7 @@ public class tfFunction implements TransferFunc{
 	public ArrayList<Node> applyLinkRule(Rule rule, Node input){
 		ArrayList<Node> result = new ArrayList<Node>();
 		if(rule.getInPorts().contains(input.getPort())) {
-			HS ohs = input.getHdr().copy();
+			Header ohs = input.getHdr().copy();
 			ohs.pushAppliedTfRule(rule.getId(), input.getPort());
 			for(int outPort: rule.getOutPorts()) {
 				result.add(new Node(ohs,outPort));
@@ -299,8 +304,8 @@ public class tfFunction implements TransferFunc{
 		System.out.println("===Generating Topology===");
 		int outPortAddition = Parser.PORT_TYPE_MULTIPLIER*Parser.OUTPUT_PORT_TYPE_CONST;
 		for(Link link:network.getLinks()) {
-			Parser fromRtr = network.getRouters().get(link.getDevice1()).getParser();
-			Parser toRtr = network.getRouters().get(link.getDevice2()).getParser();
+			Parser fromRtr = network.getRouters().get(link.getDevice1());
+			Parser toRtr = network.getRouters().get(link.getDevice2());
 			ArrayList<Integer> fromPorts = new ArrayList<Integer>();
 			ArrayList<Integer> toPorts = new ArrayList<Integer>();
 			fromPorts.add(fromRtr.get_port_id(link.getIface1())+outPortAddition);

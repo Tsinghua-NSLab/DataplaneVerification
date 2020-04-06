@@ -3,7 +3,7 @@ package driver;
 import java.util.ArrayList;
 
 import bean.Network;
-import bean.Node;
+import bean.basis.Node;
 import verifiers.applications;
 
 public class driver{

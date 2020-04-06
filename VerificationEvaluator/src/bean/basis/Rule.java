@@ -1,4 +1,4 @@
-package rules;
+package bean.basis;
 
 import java.util.ArrayList;
 
@@ -17,8 +17,8 @@ public class Rule{
 	//String filename = "";
 	String Action = "";
 	//ArrayList<Integer> lines = new ArrayList<Integer>();
-	ArrayList<Influence> affectedBy = new ArrayList<Influence>();
-	ArrayList<Rule> influenceOn = new ArrayList<Rule>();
+	//ArrayList<Influence> affectedBy = new ArrayList<Influence>();
+	//ArrayList<Rule> influenceOn = new ArrayList<Rule>();
 	
 	public Rule() {
 		
@@ -123,20 +123,20 @@ public class Rule{
 //		this.lines = lines;
 //	}
 
-	public ArrayList<Influence> getAffectedBy() {
-		return affectedBy;
-	}
+	//public ArrayList<Influence> getAffectedBy() {
+	//	return affectedBy;
+	//}
 
-	public void setAffectedBy(ArrayList<Influence> affectedBy) {
-		this.affectedBy = affectedBy;
-	}
+	//public void setAffectedBy(ArrayList<Influence> affectedBy) {
+	//	this.affectedBy = affectedBy;
+	//}
 
-	public ArrayList<Rule> getInfluenceOn() {
-		return influenceOn;
-	}
+	//public ArrayList<Rule> getInfluenceOn() {
+	//	return influenceOn;
+	//}
 
-	public void setInfluenceOn(ArrayList<Rule> influenceOn) {
-		this.influenceOn = influenceOn;
-	}
+	//public void setInfluenceOn(ArrayList<Rule> influenceOn) {
+	//	this.influenceOn = influenceOn;
+	//}
 	
 }

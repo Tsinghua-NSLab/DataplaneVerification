@@ -3,14 +3,15 @@ package hassel.bean;
 import java.util.ArrayList;
 
 import bean.basis.Ip;
+import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 import interfaces.Header;
 
 public class HS implements Header{
 	//hsList: list of all wildcards included
 	//hsDiff: a list of wildcard not included in the headerspace.
-	ArrayList<Wildcard> hsList = new ArrayList<Wildcard>();
-	ArrayList<ArrayList<Wildcard>> hsDiff = new ArrayList<ArrayList<Wildcard>>();
+	ArrayList<AbstractIP> hsList = new ArrayList<AbstractIP>();
+	ArrayList<ArrayList<AbstractIP>> hsDiff = new ArrayList<ArrayList<AbstractIP>>();
 	int length = 0;
 	//ArrayList<Rule> lazyRules;//list of (tf,rule_id,port) that has been lazy evaluated
 	//ArrayList<Rule> appliedRules;//list of (tf,rule_id,port) that has been evaluated on this headerspace
@@ -25,16 +26,16 @@ public class HS implements Header{
 		this.length = length;
 	}
 	
-	public ArrayList<Wildcard> getHsList() {
+	public ArrayList<AbstractIP> getHsList() {
 		return hsList;
 	}
-	public void setHsList(ArrayList<Wildcard> hsList) {
+	public void setHsList(ArrayList<AbstractIP> hsList) {
 		this.hsList = hsList;
 	}
-	public ArrayList<ArrayList<Wildcard>> getHsDiff() {
+	public ArrayList<ArrayList<AbstractIP>> getHsDiff() {
 		return hsDiff;
 	}
-	public void setHsDiff(ArrayList<ArrayList<Wildcard>> hsDiff) {
+	public void setHsDiff(ArrayList<ArrayList<AbstractIP>> hsDiff) {
 		this.hsDiff = hsDiff;
 	}
 	public int getLength() {
@@ -47,12 +48,18 @@ public class HS implements Header{
 	public void setHeader(Ip ip) {
 		
 	}
-	public void add(Wildcard wc) {
+	@Override
+	public void add(AbstractIP wc) {
+		//if(abstractIP.getClass().getName()=="hassel.bean.Wildcard"){
+			//Wildcard wc = (Wildcard)abstractIP;
 		if(wc.getLength()==this.length) {
-			this.hsList.add(new Wildcard(wc));
+			this.hsList.add(AbstractIPFactory.generateAbstractIP(wc));
 		}else {
 			System.out.println("Wildcard length mismatch");
 		}
+		//}else {
+			//System.out.println("HS add operation type unmatched.");
+		//}
 	}
 	
 	@Override
@@ -60,13 +67,13 @@ public class HS implements Header{
 		if(header.getClass().getName()=="hassel.bean.HS") {
 			HS hs = (HS)header;
 			if(hs.getLength()==this.length) {
-				for(Wildcard wc: hs.getHsList()) {
-					this.hsList.add(new Wildcard(wc));
+				for(AbstractIP wc: hs.getHsList()) {
+					this.hsList.add(AbstractIPFactory.generateAbstractIP(wc));
 				}
-				for(ArrayList<Wildcard> wcList: hs.getHsDiff()) {
-					ArrayList<Wildcard> tempList = new ArrayList<Wildcard>();
-					for(Wildcard wc: wcList) {
-						tempList.add(new Wildcard(wc));
+				for(ArrayList<AbstractIP> wcList: hs.getHsDiff()) {
+					ArrayList<AbstractIP> tempList = new ArrayList<AbstractIP>();
+					for(AbstractIP wc: wcList) {
+						tempList.add(AbstractIPFactory.generateAbstractIP(wc));
 					}
 					this.hsDiff.add(tempList);
 				}
@@ -84,17 +91,17 @@ public class HS implements Header{
 		}
 	}
 	
-	public void addWcList(ArrayList<Wildcard> hses) {
-		for(Wildcard hs: hses) {
+	public void addWcList(ArrayList<AbstractIP> hses) {
+		for(AbstractIP hs: hses) {
 			this.add(hs);
 		}
 	}
-	
-	public void diffHS(Wildcard wc) {
+	@Override
+	public void diffHS(AbstractIP wc) {
 		if(wc.getLength()==this.length) {
 			for(int i = 0; i< this.hsList.size();i++) {
-				Wildcard selfHs = this.hsList.get(i);
-				Wildcard insect = new Wildcard(wc);
+				AbstractIP selfHs = this.hsList.get(i);
+				AbstractIP insect = AbstractIPFactory.generateAbstractIP(wc);
 				insect.and(selfHs);
 				if(!insect.isEmpty()) {
 					this.hsDiff.get(i).add(insect);
@@ -105,8 +112,8 @@ public class HS implements Header{
 		}
 	}
 	
-	public void diffHSList(ArrayList<Wildcard> wcs) {
-		for(Wildcard wc: wcs) {
+	public void diffHSList(ArrayList<AbstractIP> wcs) {
+		for(AbstractIP wc: wcs) {
 			if(wc.getLength()==this.length) {
 				this.diffHS(wc);
 			}else {
@@ -114,14 +121,14 @@ public class HS implements Header{
 			}
 		}
 	}
-	
+	@Override
 	public int count() {
 		return this.hsList.size();
 	}
 	
 	public int countDiff() {
 		int total = 0;
-		for(ArrayList<Wildcard> diffList: this.hsDiff) {
+		for(ArrayList<AbstractIP> diffList: this.hsDiff) {
 			total += diffList.size();
 		}
 		return total;
@@ -131,12 +138,12 @@ public class HS implements Header{
 	public Header copy() {
 		HS deepCopy = new HS(this.length);
 		for(int i = 0; i < this.hsList.size(); i++) {
-			deepCopy.getHsList().add(new Wildcard(this.getHsList().get(i)));
+			deepCopy.getHsList().add(AbstractIPFactory.generateAbstractIP(this.getHsList().get(i)));
 		}
 		for(int i = 0; i < this.hsDiff.size(); i++) {
-			deepCopy.hsDiff.add(new ArrayList<Wildcard>());
-			for(Wildcard wc: this.hsDiff.get(i)) {
-				deepCopy.getHsDiff().get(i).add(new Wildcard(wc));
+			deepCopy.hsDiff.add(new ArrayList<AbstractIP>());
+			for(AbstractIP wc: this.hsDiff.get(i)) {
+				deepCopy.getHsDiff().get(i).add(AbstractIPFactory.generateAbstractIP(wc));
 			}
 		}
 		return deepCopy;
@@ -145,16 +152,13 @@ public class HS implements Header{
 	@Override
 	public String toString() {
 		String result = "";
-		ArrayList<String> strings = new ArrayList<String>();
 		for(int i = 0; i< this.hsList.size();i++) {
 			String expression = "";
 			expression = expression + this.hsList.get(i).getString();
-			for(Wildcard wc: this.hsDiff.get(i)) {
+			for(AbstractIP wc: this.hsDiff.get(i)) {
 				expression = expression + "-" + wc.getString();
 			}
-		}
-		for(String string: strings) {
-			result = "(" + result + ")+";
+			result = result + "(" + expression + ")";
 		}
 		return result;
 	}
@@ -167,24 +171,24 @@ public class HS implements Header{
 				System.out.println("HS length mismatch");
 				return;
 			}
-			ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
-			ArrayList<ArrayList<Wildcard>> newHSDiff = new ArrayList<ArrayList<Wildcard>>();
+			ArrayList<AbstractIP> newHSList = new ArrayList<AbstractIP>();
+			ArrayList<ArrayList<AbstractIP>> newHSDiff = new ArrayList<ArrayList<AbstractIP>>();
 			for(int i = 0; i< this.hsList.size(); i++) {
 				for(int j = 0; j < other.hsList.size(); j++) {
-					Wildcard isect = new Wildcard(this.hsList.get(i));
+					AbstractIP isect = AbstractIPFactory.generateAbstractIP(this.hsList.get(i));
 					isect.and(other.getHsList().get(j));
 					if(!isect.isEmpty()) {
 						newHSList.add(isect);
-						ArrayList<Wildcard> diffs = new ArrayList<Wildcard>();
-						for(Wildcard diffHS:this.hsDiff.get(i)) {
-							Wildcard diffIsect = new Wildcard(isect);
+						ArrayList<AbstractIP> diffs = new ArrayList<AbstractIP>();
+						for(AbstractIP diffHS:this.hsDiff.get(i)) {
+							AbstractIP diffIsect = AbstractIPFactory.generateAbstractIP(isect);
 							diffIsect.and(diffHS);
 							if(!diffIsect.isEmpty()) {
 								diffs.add(diffIsect);
 							}
 						}
-						for(Wildcard diffHS:other.hsDiff.get(j)) {
-							Wildcard diffIsect = new Wildcard(isect);
+						for(AbstractIP diffHS:other.hsDiff.get(j)) {
+							AbstractIP diffIsect = AbstractIPFactory.generateAbstractIP(isect);
 							diffIsect.and(diffHS);
 							if(!diffIsect.isEmpty()) {
 								diffs.add(diffIsect);
@@ -199,21 +203,21 @@ public class HS implements Header{
 		}
 	}
 	
-	public void and(Wildcard wc) {
+	public void and(AbstractIP wc) {
 		if(this.length != wc.getLength()) {
 			System.out.println("HS length mismatch");
 			return;
 		}
-		ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
-		ArrayList<ArrayList<Wildcard>> newHSDiff = new ArrayList<ArrayList<Wildcard>>();
+		ArrayList<AbstractIP> newHSList = new ArrayList<AbstractIP>();
+		ArrayList<ArrayList<AbstractIP>> newHSDiff = new ArrayList<ArrayList<AbstractIP>>();
 		for(int i =0; i<this.hsList.size(); i++) {
-			Wildcard isect = new Wildcard(wc);
+			AbstractIP isect = AbstractIPFactory.generateAbstractIP(wc);
 			isect.and(this.hsList.get(i));
 			if(!isect.isEmpty()) {
 				newHSList.add(isect);
-				newHSDiff.add(new ArrayList<Wildcard>());
-				for(Wildcard diffHS:this.hsDiff.get(i)) {
-					Wildcard diffIsect = new Wildcard(isect);
+				newHSDiff.add(new ArrayList<AbstractIP>());
+				for(AbstractIP diffHS:this.hsDiff.get(i)) {
+					AbstractIP diffIsect = AbstractIPFactory.generateAbstractIP(isect);
 					diffIsect.and(diffHS);
 					if(!diffIsect.isEmpty()) {
 						newHSDiff.get(i).add(diffIsect);
@@ -231,7 +235,7 @@ public class HS implements Header{
 		return cpy;
 	}
 	
-	public HS copyAnd(Wildcard other) {
+	public HS copyAnd(AbstractIP other) {
 		HS cpy = (HS)this.copy();
 		cpy.and(other);
 		return cpy;
@@ -241,8 +245,8 @@ public class HS implements Header{
 		HS result = null;
 		//if empty, make it all x
 		if(this.hsList.size() == 0) {
-			this.hsList.add(new Wildcard(this.length,'x'));
-			this.hsDiff = new ArrayList<ArrayList<Wildcard>>();
+			this.hsList.add(AbstractIPFactory.generateAbstractIP(this.length,'x'));
+			this.hsDiff = new ArrayList<ArrayList<AbstractIP>>();
 		}else {
 			ArrayList<HS> cHSList = new ArrayList<HS>();
 			for(int i = 0; i< this.hsList.size(); i++) {
@@ -283,7 +287,7 @@ public class HS implements Header{
 		if(this.hsDiff.size() == 0) {
 			return;
 		}
-		ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
+		ArrayList<AbstractIP> newHSList = new ArrayList<AbstractIP>();
 		for(int i = 0; i< this.getHsList().size();i++) {
 			HS incs = new HS(this.length);
 			incs.add(this.getHsList().get(i));
@@ -319,17 +323,16 @@ public class HS implements Header{
 	 * @return
 	 */
 	public boolean isContainedIn(HS other) {
-		//TODO logically error
 		for(int i = 0; i < this.getHsList().size(); i++) {
-			Wildcard h1 = this.getHsList().get(i);
+			AbstractIP h1 = this.getHsList().get(i);
 			boolean foundHsEq = false;
 			for(int j = 0; j< other.getHsList().size(); j++) {
-				Wildcard h2 = other.getHsList().get(j);
+				AbstractIP h2 = other.getHsList().get(j);
 				if(h1.equals(h2)) {
 					foundHsEq = true;
-					for(Wildcard d1:other.hsDiff.get(j)) {
+					for(AbstractIP d1:other.hsDiff.get(j)) {
 						boolean foundDiffEq = false;
-						for(Wildcard d2:this.hsDiff.get(i)) {
+						for(AbstractIP d2:this.hsDiff.get(i)) {
 							if(d1.equals(d2)) {
 								foundDiffEq = true;
 								break;
@@ -349,27 +352,27 @@ public class HS implements Header{
 	}
 	
 	public void cleanUp() {
-		ArrayList<Wildcard> newHSList = new ArrayList<Wildcard>();
-		ArrayList<ArrayList<Wildcard>> newHSDiff = new ArrayList<ArrayList<Wildcard>>();
+		ArrayList<AbstractIP> newHSList = new ArrayList<AbstractIP>();
+		ArrayList<ArrayList<AbstractIP>> newHSDiff = new ArrayList<ArrayList<AbstractIP>>();
 		//removes all objects in hs_list that will subtract out to empty
 		for(int i = 0; i< this.hsList.size();i++) {
 			boolean flag = false;
-			for(Wildcard dh: this.hsDiff.get(i)) {
+			for(AbstractIP dh: this.hsDiff.get(i)) {
 				if(dh.contains(this.getHsList().get(i))) {
 					flag = true;
 				}
 			}
 			if(!flag) {
 				newHSList.add(this.getHsList().get(i));
-				newHSDiff.add(Wildcard.compressWildCardList(this.getHsDiff().get(i)));
+				newHSDiff.add(AbstractIP.compressList(this.getHsDiff().get(i)));
 			}
 		}
 		this.hsList = newHSList;
 		this.hsDiff = newHSDiff;
 	}
 	
-	public void pushAppliedTfRule(String rulsID, int inPort) {
-		appliedRuleIDs.add(rulsID);
+	public void pushAppliedTfRule(String ruleID, int inPort) {
+		appliedRuleIDs.add(ruleID);
 		appliedInport.add(inPort);
 		
 	}

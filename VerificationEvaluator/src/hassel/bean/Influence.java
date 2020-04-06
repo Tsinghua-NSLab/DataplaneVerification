@@ -1,15 +1,16 @@
-package rules;
+package hassel.bean;
 
 import java.util.ArrayList;
 
-import hassel.bean.Wildcard;
+import bean.basis.Rule;
+import interfaces.AbstractIP;
 
 public class Influence{
 	Rule influencedBy = null;
-	Wildcard intersect = null;
+	AbstractIP intersect = null;
 	ArrayList<Integer> ports = null;
 	
-	public Influence(Rule influencedBy, Wildcard intersect, ArrayList<Integer> ports) {
+	public Influence(Rule influencedBy, AbstractIP intersect, ArrayList<Integer> ports) {
 		super();
 		this.influencedBy = influencedBy;
 		this.intersect = intersect;
@@ -21,10 +22,10 @@ public class Influence{
 	public void setInfluencedBy(Rule influencedBy) {
 		this.influencedBy = influencedBy;
 	}
-	public Wildcard getIntersect() {
+	public AbstractIP getIntersect() {
 		return intersect;
 	}
-	public void setIntersect(Wildcard intersect) {
+	public void setIntersect(AbstractIP intersect) {
 		this.intersect = intersect;
 	}
 	public ArrayList<Integer> getPorts() {
