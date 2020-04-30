@@ -24,6 +24,30 @@ public class Rule{
 		
 	}
 	
+	public Rule(Rule proto, ArrayList<Integer> inPorts) {
+		this.id = proto.getId();
+		this.inPorts.addAll(inPorts);
+		this.outPorts.addAll(proto.getOutPorts());
+		this.match = AbstractIPFactory.generateAbstractIP(proto.getMatch());
+		this.mask = AbstractIPFactory.generateAbstractIP(proto.getMask());
+		this.rewrite = AbstractIPFactory.generateAbstractIP(proto.getRewrite());
+		this.inverseMatch = AbstractIPFactory.generateAbstractIP(proto.getInverseMatch());
+		this.inverseRewrite = AbstractIPFactory.generateAbstractIP(proto.getInverseRewrite());
+		this.Action = proto.getAction();
+	}
+	
+	public Rule(Rule proto, AbstractIP newMatch) {
+		this.id = proto.getId();
+		this.inPorts.addAll(proto.getInPorts());
+		this.outPorts.addAll(proto.getOutPorts());
+		this.match = AbstractIPFactory.generateAbstractIP(newMatch);
+		this.mask = AbstractIPFactory.generateAbstractIP(proto.getMask());
+		this.rewrite = AbstractIPFactory.generateAbstractIP(proto.getRewrite());
+		this.inverseMatch = AbstractIPFactory.generateAbstractIP(proto.getInverseMatch());
+		this.inverseRewrite = AbstractIPFactory.generateAbstractIP(proto.getInverseRewrite());
+		this.Action = proto.getAction();
+	}
+	
 	//public Rule(ArrayList<Integer> inPorts, Wildcard match, ArrayList<Integer> outPorts, Wildcard mask, Wildcard rewrite, String filename, ArrayList<Integer> lines) {
 	public Rule(ArrayList<Integer> inPorts, AbstractIP match, ArrayList<Integer> outPorts, AbstractIP mask, AbstractIP rewrite) {
 		this.inPorts.addAll(inPorts);

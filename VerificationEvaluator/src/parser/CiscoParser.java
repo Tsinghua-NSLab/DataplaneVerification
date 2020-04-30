@@ -13,12 +13,12 @@ import bean.Arp;
 import bean.FIB;
 import bean.Port;
 import bean.Vlan;
+import bean.basis.BasicTF;
 import bean.basis.Ip;
 import factory.AbstractIPFactory;
 import headers.ciscoHeader;
 import interfaces.AbstractIP;
 import interfaces.Parser;
-import interfaces.TransferFunc;
 import bean.basis.Rule;
 import utils.Helper;
 
@@ -52,6 +52,10 @@ public class CiscoParser implements Parser{
     //public tfFunction getTF() {
     //	return this.tf;
     //}
+    @Override
+    public HashMap<String,Integer> getPortToID(){
+    	return portToID;
+    }
     
     public void setDefaultVlan(int vlan) {
     	this.defVlan = vlan;
@@ -303,7 +307,7 @@ public class CiscoParser implements Parser{
 		return -1;
 	}
 	
-	public void generate_transfer_function(TransferFunc tf) {
+	public void generate_transfer_function(BasicTF tf) {
 		System.out.println("=== Generating Transfer Function ===");
 		System.out.println(" * Generating ACL transfer function * ");
 		for(String acl: this.ACLIface.keySet()) {

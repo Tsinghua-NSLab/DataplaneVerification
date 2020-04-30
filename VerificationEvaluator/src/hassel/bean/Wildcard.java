@@ -136,7 +136,7 @@ public class Wildcard implements AbstractIP{
 	public boolean equals(AbstractIP other) {
 		Wildcard tmp = new Wildcard(this);
 		tmp.xor(other);
-		return tmp.isEmpty();
+		return tmp.getWcBit().isEmpty();
 	}
 	
 	@Override
@@ -144,7 +144,7 @@ public class Wildcard implements AbstractIP{
 		Wildcard tmp = new Wildcard(this);
 		tmp.and(other);
 		tmp.xor(other);
-		return tmp.isEmpty();
+		return tmp.getWcBit().isEmpty();
 	}
 	
 	@Override
@@ -166,7 +166,7 @@ public class Wildcard implements AbstractIP{
 	@Override
 	public boolean isEmpty() {
 		for(int i = 0; i< this.length;i++) {
-			if(wcBit.get(2*i)||wcBit.get(2*i+1)) {
+			if(!(wcBit.get(2*i)||wcBit.get(2*i+1))) {
 				return true;
 			}
 		}
@@ -179,15 +179,15 @@ public class Wildcard implements AbstractIP{
 		for(int i = 0; i < this.length; i++) {
 			if(this.wcBit.get(2*i)) {
 				if(this.wcBit.get(2*i+1)) {
-					result = result+"x";
+					result = "x" + result;
 				}else {
-					result = result+"0";
+					result = "0" + result;
 				}
 			}else {
 				if(this.wcBit.get(2*i+1)) {
-					result = result+"1";
+					result = "1" + result;
 				}else {
-					result = result+"z";
+					result = "z" + result;
 				}
 			}
 		}
@@ -198,20 +198,42 @@ public class Wildcard implements AbstractIP{
 	public ArrayList<AbstractIP> complement(){
 		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
 		for(int i = 0; i < this.length;i++) {
-			if(this.getWcBit().get(2*length)) {
-				if(this.getWcBit().get(2*length+1)) {
+			if(this.getWcBit().get(2*i)) {
+				if(this.getWcBit().get(2*i+1)) {
 					continue;
 				}else {
 					Wildcard tmp = new Wildcard(this.length, 'x');
-					tmp.getWcBit().clear(2*length);
+					tmp.getWcBit().clear(2*i);
+					result.add(tmp);
 				}
 			}else {
-				if(this.getWcBit().get(2*length+1)) {
+				if(this.getWcBit().get(2*i+1)) {
 					Wildcard tmp = new Wildcard(this.length, 'x');
-					tmp.getWcBit().clear(2*length+1);
+					tmp.getWcBit().clear(2*i+1);
+					result.add(tmp);
 				}else {
 					result = new ArrayList<AbstractIP>();
 					result.add(new Wildcard(this.length,'x'));
+				}
+			}
+		}
+		return result;
+	}
+	
+	@Override 
+	public ArrayList<AbstractIP> minus(AbstractIP other){
+		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
+		AbstractIP temp = new Wildcard(this.length);
+		temp.or(this);
+		temp.and(other);
+		if(temp.isEmpty()) {
+			result.add(this);
+		}else {
+			ArrayList<AbstractIP> otherComples = other.complement();
+			for(AbstractIP otherComple: otherComples) {
+				otherComple.and(this);
+				if(!otherComple.isEmpty()) {
+					result.add(otherComple);
 				}
 			}
 		}
@@ -255,6 +277,11 @@ public class Wildcard implements AbstractIP{
 		return -1;
 	}
 	
+	@Override
+	public String toString() {
+		return getString();
+	}
+	
 	/*public static ArrayList<Wildcard> compressWildCardList(ArrayList<Wildcard> l) {
 		ArrayList<Integer> popIndex = new ArrayList<Integer>();
 		for(int i = 0; i< l.size(); i++) {
@@ -276,9 +303,4 @@ public class Wildcard implements AbstractIP{
 		return result;
 	}*/
 	
-	public static void main(String[] args) {
-		Wildcard test = new Wildcard("10101010");
-		String testClass = test.getClass().getName();
-		System.out.println(test.getClass().toString());
-	}
 }

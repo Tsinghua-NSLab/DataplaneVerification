@@ -1,12 +1,10 @@
-package hassel.bean;
+package bean.basis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import bean.Link;
 import bean.Network;
-import bean.basis.Node;
-import bean.basis.Rule;
 import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 //import hassel.bean.HS;
@@ -48,8 +46,12 @@ public class tfFunction implements TransferFunc{
 		if(position == -1||position>=rules.size()) {
 			position = rules.size();
 			rules.add(rule);
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}else {
 			rules.add(position, rule);
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}
 		this.findInfluences(position);
 		this.setFastLookupPointers(position);
@@ -77,8 +79,12 @@ public class tfFunction implements TransferFunc{
 		if(position == -1 || position>this.rules.size()) {
 			rules.add(rule);
 			position = rules.size()-1;
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}else {
 			rules.add(position, rule);
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}
 		//Setting up fast lookups and influences
 		this.findInfluences(position);
@@ -95,8 +101,12 @@ public class tfFunction implements TransferFunc{
 		if(position == -1) {
 			this.rules.add(rule);
 			position = this.rules.size()-1;
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}else {
 			this.rules.add(position, rule);
+			this.idToAffectedBy.put(rule.getId(), new ArrayList<Influence>());
+			this.idToInfluenceOn.put(rule.getId(), new ArrayList<Rule>());
 		}
 		this.setFastLookupPointers(position);
 	}
@@ -114,7 +124,13 @@ public class tfFunction implements TransferFunc{
 				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
+					if(!this.idToAffectedBy.containsKey(newRule.getId())) {
+						this.idToAffectedBy.put(newRule.getId(), new ArrayList<Influence>());
+					}
 					this.idToAffectedBy.get(newRule.getId()).add(new Influence(rules.get(i),intersect,commonPorts));
+					if(!this.idToInfluenceOn.containsKey(rules.get(i).getId())) {
+						this.idToInfluenceOn.put(rules.get(i).getId(), new ArrayList<Rule>());
+					}
 					this.idToInfluenceOn.get(rules.get(i).getId()).add(rules.get(position));
 					//newRule.getAffectedBy().add(new Influence(rules.get(i),intersect,commonPorts));
 					//rules.get(i).getInfluenceOn().add(rules.get(position));

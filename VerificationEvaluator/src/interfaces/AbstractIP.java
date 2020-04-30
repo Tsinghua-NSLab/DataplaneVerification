@@ -5,14 +5,15 @@ import java.util.HashMap;
 
 public interface AbstractIP{
 	//Init
-	void setMask(int rightMask);//
-	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);//
+	void setMask(int rightMask);
+	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);
 	//Bit operation
-	void and(AbstractIP other);//
-	void or(AbstractIP other);//
-	void xor(AbstractIP other);//
-	void not();//
-	ArrayList<AbstractIP> complement();//
+	void and(AbstractIP other);
+	void or(AbstractIP other);
+	void xor(AbstractIP other);
+	void not();
+	ArrayList<AbstractIP> complement();
+	ArrayList<AbstractIP> minus(AbstractIP other);
 	static ArrayList<AbstractIP> compressList(ArrayList<AbstractIP> l){
 		ArrayList<Integer> popIndex = new ArrayList<Integer>();
 		for(int i = 0; i< l.size(); i++) {

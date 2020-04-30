@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import bean.Network;
 import bean.basis.Node;
-import verifiers.applications;
+import verifiers.FindReachability;;
 
 public class driver{
 	Network network = new Network();	
@@ -25,7 +25,7 @@ public class driver{
 		driver test = new driver();
 		test.init();
 		Node node = new Node();
-		applications.findReachability(test.network.getNTF(), test.network.getTTF(), node, new ArrayList<Integer>());
+		//FindReachability.findReachabilityByPropagation(test.network.getNTF(), test.network.getTTF(), node, new ArrayList<Integer>());
 		System.out.println(test);
 	}
 }

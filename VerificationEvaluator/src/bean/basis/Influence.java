@@ -1,8 +1,7 @@
-package hassel.bean;
+package bean.basis;
 
 import java.util.ArrayList;
 
-import bean.basis.Rule;
 import interfaces.AbstractIP;
 
 public class Influence{

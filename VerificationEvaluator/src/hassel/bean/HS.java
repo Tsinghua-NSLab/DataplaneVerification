@@ -54,6 +54,7 @@ public class HS implements Header{
 			//Wildcard wc = (Wildcard)abstractIP;
 		if(wc.getLength()==this.length) {
 			this.hsList.add(AbstractIPFactory.generateAbstractIP(wc));
+			this.hsDiff.add(new ArrayList<AbstractIP>());
 		}else {
 			System.out.println("Wildcard length mismatch");
 		}

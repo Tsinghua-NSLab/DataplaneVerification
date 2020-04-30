@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import bean.basis.BasicTF;
 import device.RawDevice;
 import factory.ParserFactory;
-import factory.TransferFuncFactory;
 import parser.CiscoParser;
 import interfaces.Parser;
 import interfaces.TransferFunc;
 
 public class Network{
 	ArrayList<Link> links = new ArrayList<Link>();
+	ArrayList<GraphNode> graph = new ArrayList<GraphNode>();
 	HashMap<String, Parser> routers = new HashMap<String, Parser>();
-	TransferFunc NTF = TransferFuncFactory.generateTransferFunc();
-	TransferFunc TTF = TransferFuncFactory.generateTransferFunc();
+	HashMap<String, Integer> portToID = new HashMap<String, Integer>(); 
+	BasicTF NTF = new BasicTF();
+	BasicTF TTF = new BasicTF();
 	String configDict = "examples\\";
+	
 	public Network() {
 		
 	}
@@ -48,6 +51,7 @@ public class Network{
 			this.getRouters().get(rtrName).optimize_forwarding_table();
 			this.getRouters().get(rtrName).generate_port_ids(new HashSet<String>());
 			this.getRouters().get(rtrName).generate_transfer_function(NTF);
+			this.portToID.putAll(this.getRouters().get(rtrName).getPortToID());
 		}
 		//Add links
 		this.getLinks().add(new Link("bbra_rtr","te7/3","goza_rtr","te2/1"));
@@ -65,6 +69,7 @@ public class Network{
 		this.getLinks().add(new Link("bbra_rtr","te7/2","sozb_rtr","te3/1"));
 		this.getLinks().add(new Link("bbra_rtr","te6/3","yoza_rtr","te1/3"));
 		this.getLinks().add(new Link("bbra_rtr","te7/1","bbrb_rtr","te7/1"));
+		
 		this.getLinks().add(new Link("bbrb_rtr","te7/4","yoza_rtr","te7/1"));
 		this.getLinks().add(new Link("bbrb_rtr","te1/1","goza_rtr","te3/1"));
 		this.getLinks().add(new Link("bbrb_rtr","te1/1","pozb_rtr","te2/1"));
@@ -91,21 +96,62 @@ public class Network{
         this.TTF.writeTopology(this);
 	}
 	
+	
+	//TODO need change
+	public void generateGraphFromLinks() {
+		HashMap<String,GraphNode> existNode = new HashMap<String,GraphNode>();
+		HashMap<String,HashSet<String>> routerToPort = new HashMap<String,HashSet<String>>();
+		
+		for(Link link: links) {
+			if(routerToPort.containsKey(link.getDevice1())) {
+				routerToPort.get(link.getDevice1()).add(link.getIface1());
+			}else {
+				routerToPort.put(link.getDevice1(), new HashSet<String>());
+				routerToPort.get(link.getDevice1()).add(link.getIface1());
+			}
+			if(routerToPort.containsKey(link.getDevice2())) {
+				routerToPort.get(link.getDevice2()).add(link.getIface2());
+			}else {
+				routerToPort.put(link.getDevice2(), new HashSet<String>());
+				routerToPort.get(link.getDevice2()).add(link.getIface2());
+			}
+		}
+		for(String routerName:routerToPort.keySet()) {
+			for(String portName:routerToPort.get(routerName)) {
+				existNode.put(routerName+"_"+portName, new GraphNode(this.portToID.get(routerName+"_"+portName)));
+			}
+			for(String portName:routerToPort.get(routerName)) {
+				for(String otherPortName:routerToPort.get(routerName)) {
+					if(portName.equals(otherPortName)) {
+						continue;
+					}else {
+						existNode.get(routerName+"_"+portName).getAdjacent().add(existNode.get(routerName+"_"+otherPortName));
+						existNode.get(routerName+"_"+otherPortName).getAdjacent().add(existNode.get(routerName+"_"+portName));
+					}
+				}
+			}
+		}
+		for(Link link: links) {
+			existNode.get(link.getDevice1()+"_"+link.getIface1()).getAdjacent().add(existNode.get(link.getDevice2()+"_"+link.getIface2()));
+			existNode.get(link.getDevice2()+"_"+link.getIface2()).getAdjacent().add(existNode.get(link.getDevice1()+"_"+link.getIface1()));
+		}
+	}
+	
 	public Network(HashMap<String, Parser> routers, ArrayList<Link> links) {
 		this.routers.putAll(routers);
 		this.links.addAll(links);
 	}
 	
-	public TransferFunc getNTF() {
+	public BasicTF getNTF() {
 		return NTF;
 	}
-	public void setNTF(TransferFunc nTF) {
+	public void setNTF(BasicTF nTF) {
 		NTF = nTF;
 	}
-	public TransferFunc getTTF() {
+	public BasicTF getTTF() {
 		return TTF;
 	}
-	public void setTTF(TransferFunc tTF) {
+	public void setTTF(BasicTF tTF) {
 		TTF = tTF;
 	}
 	public String getConfigDict() {

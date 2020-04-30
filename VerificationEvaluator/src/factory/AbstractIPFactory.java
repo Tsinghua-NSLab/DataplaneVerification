@@ -5,10 +5,10 @@ import interfaces.AbstractIP;
 
 public class AbstractIPFactory{
 	private static AbstractIP generateAbstractIP(String type, AbstractIP other) {
-		if(type == "Wildcard") {
-			if(other.getClass().toString() == "hassel.bean.Wildcard") {
-				return new Wildcard((Wildcard)other);
-			}
+		if(other == null) {
+			return null;
+		}else if(type == "Wildcard") {
+			return new Wildcard((Wildcard)other);
 		}
 		return null;
 	}
@@ -18,10 +18,19 @@ public class AbstractIPFactory{
 		}
 		return null;
 	}
+	private static AbstractIP generateAbstractIP(String type, String wc) {
+		if(type == "Wildcard") {
+			return new Wildcard(wc);
+		}
+		return null;
+	}
 	public static AbstractIP generateAbstractIP(AbstractIP other) {
-		return generateAbstractIP(config.TypeConfig.HEADER_TYPE,other);
+		return generateAbstractIP(config.TypeConfig.ABSTRACT_IP_TYPE,other);
 	}
 	public static AbstractIP generateAbstractIP(int length, char bit) {
-		return generateAbstractIP(config.TypeConfig.HEADER_TYPE, length, bit);
+		return generateAbstractIP(config.TypeConfig.ABSTRACT_IP_TYPE, length, bit);
+	}
+	public static AbstractIP generateAbstractIP(String wc) {
+		return generateAbstractIP(config.TypeConfig.ABSTRACT_IP_TYPE, wc);
 	}
 }
