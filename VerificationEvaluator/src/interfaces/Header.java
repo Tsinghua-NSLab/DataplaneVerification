@@ -9,22 +9,22 @@ public interface Header{
 	void setHeader(Ip ip);
 	String toString();
 	//get
-	ArrayList<AbstractIP> getHsList();
-	ArrayList<ArrayList<AbstractIP>> getHsDiff();
+	//ArrayList<AbstractIP> getHsList();
+	//ArrayList<ArrayList<AbstractIP>> getHsDiff();
 	//Set Operation
 	void add(Header header);//OR
-	void add(AbstractIP header);
+	//void add(AbstractIP header);
 	void and(Header header);//AND
-	void and(AbstractIP header);
+	//void and(AbstractIP header);
 	Header copyAnd(Header header);
-	Header copyAnd(AbstractIP header);
+	//Header copyAnd(AbstractIP header);
 	void complement();
 	Header copyComplement();
 	void minus(Header header);
 	Header copyMinus(Header header);
-	void diffHS(AbstractIP header);
+	//void diffHS(AbstractIP header);
 	
-	int count();
+	//int count();
 	
 	Header copy();
 	
@@ -32,5 +32,5 @@ public interface Header{
 	boolean isEmpty();
 	//Others
 	void cleanUp();
-	void pushAppliedTfRule(String ruleID, int inPort);
+	//void pushAppliedTfRule(String ruleID, int inPort);
 }

@@ -46,7 +46,9 @@ public class Predicate{
 		Predicate result = new Predicate();
 		ArrayList<AbstractIP> temp = new ArrayList<AbstractIP>();
 		for(AbstractIP header:this.getHeaders()) {
-			
+			temp.addAll(header.complement());
+			ArrayList<AbstractIP> intersect = new ArrayList<AbstractIP>();
+			for(AbstractIP )
 		}
 	}
 }
