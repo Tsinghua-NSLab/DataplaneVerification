@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import bean.Link;
 import bean.Network;
-import factory.AbstractIPFactory;
-import interfaces.AbstractIP;
 //import hassel.bean.HS;
 //import hassel.bean.Wildcard;
 import interfaces.Header;
@@ -62,16 +60,16 @@ public class tfFunction implements TransferFunc{
 	}
 	public void addRewriteRule(Rule rule, int position) {
 		//Mask rewrite
-		AbstractIP temp = AbstractIPFactory.generateAbstractIP(rule.getMask());
-		temp.not();
+		Header temp = rule.getMask().copy();
+		temp.complement();
 		rule.getRewrite().and(temp);
 		rule.setAction("rw");
 		//Finding inverse
-		rule.setInverseMatch(AbstractIPFactory.generateAbstractIP(rule.getMask()));
+		rule.setInverseMatch(rule.getMask().copy());
 		rule.getInverseMatch().and(rule.getMatch());
-		rule.getInverseMatch().or(rule.getRewrite());
-		rule.setInverseRewrite(AbstractIPFactory.generateAbstractIP(rule.getMask()));
-		rule.getInverseRewrite().not();
+		rule.getInverseMatch().add(rule.getRewrite());
+		rule.setInverseRewrite(rule.getMask().copy());
+		rule.getInverseRewrite().complement();
 		rule.getInverseRewrite().and(rule.getMatch());
 		//Setting up id
 		rule.setId(this.generateNextID());
@@ -121,7 +119,7 @@ public class tfFunction implements TransferFunc{
 					if(rules.get(i).getInPorts().contains(inPort));
 					commonPorts.add(inPort);
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = rules.get(i).getMatch().copy();
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
 					if(!this.idToAffectedBy.containsKey(newRule.getId())) {
@@ -144,7 +142,7 @@ public class tfFunction implements TransferFunc{
 					if(rules.get(i).getInPorts().contains(inPort));
 					commonPorts.add(inPort);
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = rules.get(i).getMatch().copy();
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
 					this.idToInfluenceOn.get(newRule.getId()).add(rules.get(i));
@@ -194,28 +192,16 @@ public class tfFunction implements TransferFunc{
 		}
 		//check if match pattern matches and port is in in_ports.
 		Header newHS = input.getHdr().copyAnd(rule.getMatch());
-		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			for(Influence inf:this.idToAffectedBy.get(rule.getId())) {
 				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
-					newHS.diffHS(inf.getIntersect());
+					newHS.minus(inf.getIntersect());
 				}
 			}
 			//apply mask,rewrite to all elements in hs_list and hs_diff, 
             //considering the cardinality.
-			for(int i = 0; i<newHS.getHsList().size();i++) {
-				//TODO how rewrite? tf.py line 461
-				int card = newHS.getHsList().get(i).rewrite(rule.getMask(), rule.getRewrite());
-				ArrayList<AbstractIP> newDiffList = new ArrayList<AbstractIP>();
-				for(int j = 0; j<newHS.getHsDiff().get(i).size();j++) {
-					int diffCard = newHS.getHsDiff().get(i).get(j).rewrite(rule.getMask(), rule.getRewrite());
-					if(diffCard==card) {
-						newDiffList.add(newHS.getHsDiff().get(i).get(j));
-					}
-				}
-				newHS.getHsDiff().set(i, newDiffList);
-			}
-			newHS.cleanUp();
-			if(newHS.count() == 0) {
+			newHS.rewrite(rule.getMask(), rule.getRewrite());
+			if(newHS.isEmpty()) {
 				appliedRules.add(rule.getId());
 				return result;
 			}
@@ -240,14 +226,14 @@ public class tfFunction implements TransferFunc{
 		}
 		//check if match pattern matches and port is in in_ports.
 		Header newHS = input.getHdr().copyAnd(rule.getMatch());
-		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			for(Influence inf:this.idToAffectedBy.get(rule.getId())) {
 				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
-					newHS.diffHS(inf.getIntersect());
+					newHS.minus(inf.getIntersect());
 				}
 			}
 			newHS.cleanUp();
-			if(newHS.count()==0) {
+			if(newHS.isEmpty()) {
 				appliedRules.add(rule.getId());
 				return result;
 			}

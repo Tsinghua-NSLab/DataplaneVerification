@@ -65,17 +65,17 @@ public class BasicTF{
 	}
 	public void addRewriteRule(Rule rule, int position) {
 		//Mask rewrite
-		AbstractIP temp = AbstractIPFactory.generateAbstractIP(rule.getMask());
-		temp.not();
+		Header temp = rule.getMask().copy();
+		temp.complement();
 		rule.getRewrite().and(temp);
 		rule.setAction("rw");
 		//Finding inverse
 		//TODO need test
-		rule.setInverseMatch(AbstractIPFactory.generateAbstractIP(rule.getMask()));
+		rule.setInverseMatch(rule.getMask().copy());
 		rule.getInverseMatch().and(rule.getMatch());
-		rule.getInverseMatch().or(rule.getRewrite());
-		rule.setInverseRewrite(AbstractIPFactory.generateAbstractIP(rule.getMask()));
-		rule.getInverseRewrite().not();
+		rule.getInverseMatch().add(rule.getRewrite());
+		rule.setInverseRewrite(rule.getMask().copy());
+		rule.getInverseRewrite().complement();;
 		rule.getInverseRewrite().and(rule.getMatch());
 		//Setting up id
 		rule.setId(this.generateNextID());
@@ -126,7 +126,7 @@ public class BasicTF{
 						commonPorts.add(inPort);
 					}
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = rules.get(i).getMatch().copy();
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
 					if(!this.idToAffectedBy.containsKey(newRule.getId())) {
@@ -149,7 +149,7 @@ public class BasicTF{
 					if(rules.get(i).getInPorts().contains(inPort));
 					commonPorts.add(inPort);
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = rules.get(i).getMatch().copy();
 				intersect.and(newRule.getMatch());
 				if(!intersect.isEmpty()&&commonPorts.size()>0) {
 					this.idToInfluenceOn.get(newRule.getId()).add(rules.get(i));
@@ -250,20 +250,16 @@ public class BasicTF{
 	public ArrayList<Rule> ruleDecoupleSingle(Rule rule, Influence influence){
 		ArrayList<Rule> result = new ArrayList<Rule>();
 		if(rule.getInPorts().equals(influence.getPorts())) {
-			ArrayList<AbstractIP> minusIPs = rule.getMatch().minus(influence.getIntersect());
-			for(AbstractIP minusIP:minusIPs) {
-				result.add(new Rule(rule,minusIP));
-			}
+			Header minusIP = rule.getMatch().copyMinus(influence.getIntersect());
+			result.add(new Rule(rule,minusIP));
 		}else {
 			ArrayList<Integer> otherPorts = new ArrayList<Integer>();
 			otherPorts.addAll(rule.getInPorts());
 			otherPorts.removeAll(influence.getPorts());
 			result.add(new Rule(rule, otherPorts));
 			rule.getInPorts().removeAll(otherPorts);
-			ArrayList<AbstractIP> minusIPs = rule.getMatch().minus(influence.getIntersect());
-			for(AbstractIP minusIP:minusIPs) {
-				result.add(new Rule(rule,minusIP));
-			}
+			Header minusIP = rule.getMatch().copyMinus(influence.getIntersect());
+			result.add(new Rule(rule,minusIP));
 		}
 		return result;
 	}

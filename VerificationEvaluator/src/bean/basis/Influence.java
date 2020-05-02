@@ -3,13 +3,14 @@ package bean.basis;
 import java.util.ArrayList;
 
 import interfaces.AbstractIP;
+import interfaces.Header;
 
 public class Influence{
 	Rule influencedBy = null;
-	AbstractIP intersect = null;
+	Header intersect = null;
 	ArrayList<Integer> ports = null;
 	
-	public Influence(Rule influencedBy, AbstractIP intersect, ArrayList<Integer> ports) {
+	public Influence(Rule influencedBy, Header intersect, ArrayList<Integer> ports) {
 		super();
 		this.influencedBy = influencedBy;
 		this.intersect = intersect;
@@ -21,10 +22,10 @@ public class Influence{
 	public void setInfluencedBy(Rule influencedBy) {
 		this.influencedBy = influencedBy;
 	}
-	public AbstractIP getIntersect() {
+	public Header getIntersect() {
 		return intersect;
 	}
-	public void setIntersect(AbstractIP intersect) {
+	public void setIntersect(Header intersect) {
 		this.intersect = intersect;
 	}
 	public ArrayList<Integer> getPorts() {

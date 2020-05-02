@@ -1,6 +1,7 @@
 package hassel.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import bean.basis.Ip;
 import factory.AbstractIPFactory;
@@ -48,7 +49,7 @@ public class HS implements Header{
 	public void setHeader(Ip ip) {
 		
 	}
-	@Override
+	
 	public void add(AbstractIP wc) {
 		//if(abstractIP.getClass().getName()=="hassel.bean.Wildcard"){
 			//Wildcard wc = (Wildcard)abstractIP;
@@ -97,7 +98,7 @@ public class HS implements Header{
 			this.add(hs);
 		}
 	}
-	@Override
+	
 	public void diffHS(AbstractIP wc) {
 		if(wc.getLength()==this.length) {
 			for(int i = 0; i< this.hsList.size();i++) {
@@ -122,7 +123,7 @@ public class HS implements Header{
 			}
 		}
 	}
-	@Override
+	
 	public int count() {
 		return this.hsList.size();
 	}
@@ -282,6 +283,46 @@ public class HS implements Header{
 		Header cpy = this.copy();
 		cpy.minus(other);
 		return cpy;
+	}
+	
+	@Override
+	public void rewrite(Header mask, Header rewrite) {
+		if((mask.getClass().getName()=="hassel.bean.HS")&&(rewrite.getClass().getName()=="hassel.bean.HS")) {
+			HS maskHS = (HS)mask;
+			HS rewriteHS = (HS)rewrite;
+			if(!(maskHS.getLength()==1&&rewriteHS.getLength()==1)) {
+				System.out.println("Warning, mask and rewrite may not correct");
+			}
+			AbstractIP maskWC = maskHS.getHsList().get(0);
+			AbstractIP rewriteWC = rewriteHS.getHsList().get(0);
+			for(int i = 0; i<this.getLength();i++) {
+				int card = this.getHsList().get(i).rewrite(maskWC, rewriteWC);
+				ArrayList<AbstractIP> newDiffList = new ArrayList<AbstractIP>();
+				for(int j = 0; j< this.getHsDiff().get(i).size();j++) {
+					int diffCard = this.getHsDiff().get(i).get(j).rewrite(maskWC, rewriteWC);
+					if(diffCard==card) {
+						newDiffList.add(this.getHsDiff().get(i).get(j));
+					}
+				}
+				this.getHsDiff().set(i, newDiffList);
+			}
+			this.cleanUp();
+		}else {
+			System.out.println("Error, Header type unmatch");
+			return;
+		}
+	}
+	
+	@Override 
+	public void setField(HashMap<String, Integer> hsFormat, String field, int value, int rightMask) {
+		for(AbstractIP abstractIP: hsList) {
+			abstractIP.setField(hsFormat, field, value, rightMask);
+		}
+		for(ArrayList<AbstractIP> abstractIPs: hsDiff) {
+			for(AbstractIP abstractIP: abstractIPs) {
+				abstractIP.setField(hsFormat, field, value, rightMask);
+			}
+		}
 	}
 	
 	public void selfDiff() {

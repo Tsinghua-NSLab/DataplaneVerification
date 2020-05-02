@@ -4,16 +4,17 @@ import java.util.ArrayList;
 
 import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
+import interfaces.Header;
 
 public class Rule{
 	String id = null;
 	ArrayList<Integer> inPorts = new ArrayList<Integer>();
 	ArrayList<Integer> outPorts = new ArrayList<Integer>();
-	AbstractIP match = null;
-	AbstractIP mask = null;
-	AbstractIP rewrite = null;
-	AbstractIP inverseMatch = null;
-	AbstractIP inverseRewrite = null;
+	Header match = null;
+	Header mask = null;
+	Header rewrite = null;
+	Header inverseMatch = null;
+	Header inverseRewrite = null;
 	//String filename = "";
 	String Action = "";
 	//ArrayList<Integer> lines = new ArrayList<Integer>();
@@ -28,38 +29,38 @@ public class Rule{
 		this.id = proto.getId();
 		this.inPorts.addAll(inPorts);
 		this.outPorts.addAll(proto.getOutPorts());
-		this.match = AbstractIPFactory.generateAbstractIP(proto.getMatch());
-		this.mask = AbstractIPFactory.generateAbstractIP(proto.getMask());
-		this.rewrite = AbstractIPFactory.generateAbstractIP(proto.getRewrite());
-		this.inverseMatch = AbstractIPFactory.generateAbstractIP(proto.getInverseMatch());
-		this.inverseRewrite = AbstractIPFactory.generateAbstractIP(proto.getInverseRewrite());
+		if(proto.getMatch()!=null)this.match = proto.getMatch().copy();
+		if(proto.getMask()!=null)this.mask = proto.getMask().copy();
+		if(proto.getRewrite()!=null)this.rewrite = proto.getRewrite().copy();
+		if(proto.getInverseMatch()!=null)this.inverseMatch = proto.getInverseMatch().copy();
+		if(proto.getInverseRewrite()!=null)this.inverseRewrite = proto.getInverseRewrite().copy();
 		this.Action = proto.getAction();
 	}
 	
-	public Rule(Rule proto, AbstractIP newMatch) {
+	public Rule(Rule proto, Header newMatch) {
 		this.id = proto.getId();
 		this.inPorts.addAll(proto.getInPorts());
 		this.outPorts.addAll(proto.getOutPorts());
-		this.match = AbstractIPFactory.generateAbstractIP(newMatch);
-		this.mask = AbstractIPFactory.generateAbstractIP(proto.getMask());
-		this.rewrite = AbstractIPFactory.generateAbstractIP(proto.getRewrite());
-		this.inverseMatch = AbstractIPFactory.generateAbstractIP(proto.getInverseMatch());
-		this.inverseRewrite = AbstractIPFactory.generateAbstractIP(proto.getInverseRewrite());
+		if(proto.getMatch()!=null)this.match = newMatch.copy();
+		if(proto.getMask()!=null)this.mask = proto.getMask().copy();
+		if(proto.getRewrite()!=null)this.rewrite = proto.getRewrite().copy();
+		if(proto.getInverseMatch()!=null)this.inverseMatch = proto.getInverseMatch().copy();
+		if(proto.getInverseRewrite()!=null)this.inverseRewrite = proto.getInverseRewrite().copy();
 		this.Action = proto.getAction();
 	}
 	
 	//public Rule(ArrayList<Integer> inPorts, Wildcard match, ArrayList<Integer> outPorts, Wildcard mask, Wildcard rewrite, String filename, ArrayList<Integer> lines) {
-	public Rule(ArrayList<Integer> inPorts, AbstractIP match, ArrayList<Integer> outPorts, AbstractIP mask, AbstractIP rewrite) {
+	public Rule(ArrayList<Integer> inPorts, Header match, ArrayList<Integer> outPorts, Header mask, Header rewrite) {
 		this.inPorts.addAll(inPorts);
 		this.outPorts.addAll(outPorts);
 		if(match != null) {
-			this.match = AbstractIPFactory.generateAbstractIP(match);
+			this.match = match.copy();
 		}
 		if(mask != null) {
-			this.mask = AbstractIPFactory.generateAbstractIP(mask);
+			this.mask = mask.copy();
 		}
 		if(rewrite != null) {
-			this.rewrite = AbstractIPFactory.generateAbstractIP(rewrite);
+			this.rewrite = rewrite.copy();
 		}
 	//	this.filename = filename;
 	//	this.lines.addAll(lines);
@@ -83,43 +84,43 @@ public class Rule{
 		this.outPorts = outPorts;
 	}
 
-	public AbstractIP getMatch() {
+	public Header getMatch() {
 		return match;
 	}
 
-	public void setMatch(AbstractIP match) {
+	public void setMatch(Header match) {
 		this.match = match;
 	}
 
-	public AbstractIP getMask() {
+	public Header getMask() {
 		return mask;
 	}
 
-	public void setMask(AbstractIP mask) {
+	public void setMask(Header mask) {
 		this.mask = mask;
 	}
 
-	public AbstractIP getRewrite() {
+	public Header getRewrite() {
 		return rewrite;
 	}
 
-	public void setRewrite(AbstractIP rewrite) {
+	public void setRewrite(Header rewrite) {
 		this.rewrite = rewrite;
 	}
 
-	public AbstractIP getInverseMatch() {
+	public Header getInverseMatch() {
 		return inverseMatch;
 	}
 
-	public void setInverseMatch(AbstractIP inverseMatch) {
+	public void setInverseMatch(Header inverseMatch) {
 		this.inverseMatch = inverseMatch;
 	}
 
-	public AbstractIP getInverseRewrite() {
+	public Header getInverseRewrite() {
 		return inverseRewrite;
 	}
 
-	public void setInverseRewrite(AbstractIP inverseRewrite) {
+	public void setInverseRewrite(Header inverseRewrite) {
 		this.inverseRewrite = inverseRewrite;
 	}
 

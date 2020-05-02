@@ -15,9 +15,9 @@ import bean.Port;
 import bean.Vlan;
 import bean.basis.BasicTF;
 import bean.basis.Ip;
-import factory.AbstractIPFactory;
+import factory.HeaderFactory;
 import headers.ciscoHeader;
-import interfaces.AbstractIP;
+import interfaces.Header;
 import interfaces.Parser;
 import bean.basis.Rule;
 import utils.Helper;
@@ -338,7 +338,7 @@ public class CiscoParser implements Parser{
 					accessPorts.add(portToID.get(aclInstance.getIface()));
 				}
 				for(ACL aclDicEntry:this.ACLList.get(acl)) {
-					ArrayList<AbstractIP> matches = this.acl_dict_entry_to_wc(aclDicEntry);
+					ArrayList<Header> matches = this.acl_dict_entry_to_wc(aclDicEntry);
 					ArrayList<Integer> lines = new ArrayList<Integer>();
 					lines.add(aclInstance.getLine());
 					lines.add(aclDicEntry.getLine());
@@ -349,7 +349,7 @@ public class CiscoParser implements Parser{
 						if(aclDicEntry.isAction()) {
 							outPorts.add(this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER);
 						}
-						for(AbstractIP match: matches) {
+						for(Header match: matches) {
 							//IN ACL for VLAN tagged packets going to trunk or access ports
 							match.setField(cHeader.getFormat(), "vlan", vlan, 0);
 							//Rule nextRule = new Rule(inPorts,match,outPorts,null,null,filename,lines);
@@ -362,11 +362,11 @@ public class CiscoParser implements Parser{
 							//with the corresponding VLAN tag.
 							if(accessPorts.size()>0) {
 								match.setField(cHeader.getFormat(), "vlan", 0, 0);
-								AbstractIP mask = null;
-								AbstractIP rewrite = null;
+								Header mask = null;
+								Header rewrite = null;
 								if(vlan!=-1) {
-									mask = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'1');
-									rewrite = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'0');
+									mask = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'1');
+									rewrite = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'0');
 									mask.setField(cHeader.getFormat(), "vlan", 0, 0);
 									rewrite.setField(cHeader.getFormat(), "vlan", vlan, 0);
 								}
@@ -376,7 +376,7 @@ public class CiscoParser implements Parser{
 							}
 						}// *** OUT ACL ENTRIES
 					}else if((!aclInstance.isInout())&&vlan!=-1) {
-						for(AbstractIP match: matches) {
+						for(Header match: matches) {
 							match.setField(cHeader.getFormat(), "vlan", vlan, 0);
 							if(!aclDicEntry.isAction()) {
 								ArrayList<Integer> outPorts = new ArrayList<Integer>();
@@ -405,8 +405,8 @@ public class CiscoParser implements Parser{
 									ArrayList<Integer> inPorts = new ArrayList<Integer>();
 									inPorts.add(port+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
 									outPorts.add(port + CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.OUTPUT_PORT_TYPE_CONST);
-									AbstractIP mask = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'1');
-									AbstractIP rewrite = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'0');
+									Header mask = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'1');
+									Header rewrite = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'0');
 									//TODO why here 0 and vlan before
 									mask.setField(cHeader.getFormat(), "vlan", 0, 0);
 									rewrite.setField(cHeader.getFormat(), "vlan", 0, 0);
@@ -417,7 +417,7 @@ public class CiscoParser implements Parser{
 							}
 						}// ** OUT ACL for non-vlan port
 					}else if((!aclInstance.isInout())&&vlan==-1) {
-						for(AbstractIP match: matches) {
+						for(Header match: matches) {
 							for(int port: accessPorts) {
 								// If sending out from an access port, strip the VLAN tag
 								ArrayList<Integer> outPorts = new ArrayList<Integer>();
@@ -458,7 +458,7 @@ public class CiscoParser implements Parser{
 				}
 			}
 			//default rule for vlan tagged packets received on trunk port
-			AbstractIP match = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x');
+			Header match = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x');
 			match.setField(cHeader.getFormat(), "vlan", cnfVlan, 0);
 			//Rule defRule = new Rule(trunkPorts, match, intermediatePort, null, null, "", new ArrayList<Integer>());
 			Rule defRule = new Rule(trunkPorts, match, intermediatePort, null, null);
@@ -466,9 +466,9 @@ public class CiscoParser implements Parser{
 			
 			//default rule for un-vlan tagged packets received on access port
 			if(accessPorts.size()>0) {
-				match = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x');
-				AbstractIP mask = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'1');
-				AbstractIP rewrite = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'0');
+				match = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x');
+				Header mask = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'1');
+				Header rewrite = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'0');
 				match.setField(cHeader.getFormat(), "vlan", 0, 0);
 				mask.setField(cHeader.getFormat(), "vlan", 0, 0);
 				rewrite.setField(cHeader.getFormat(), "vlan", cnfVlan, 0);
@@ -479,9 +479,9 @@ public class CiscoParser implements Parser{
 			
 			//default rules for vlan-tagged outgoing packets on an access port
 			for(int portID: accessPorts) {
-				match = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x');
-				AbstractIP mask = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'1');
-				AbstractIP rewrite = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'0');
+				match = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x');
+				Header mask = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'1');
+				Header rewrite = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'0');
 				match.setField(cHeader.getFormat(), "vlan", cnfVlan, 0);
 				mask.setField(cHeader.getFormat(), "vlan", 0, 0);
 				rewrite.setField(cHeader.getFormat(), "vlan", 0, 0);
@@ -498,7 +498,7 @@ public class CiscoParser implements Parser{
 		for(String port: portToID.keySet()) {
 			if((!port.equals("self"))&&(!allAccessPorts.contains(port))) {
 				int portID = portToID.get(port);
-				AbstractIP match = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x');
+				Header match = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x');
 				ArrayList<Integer> beforeOutPort = new ArrayList<Integer>();
 				ArrayList<Integer> afterOutPort = new ArrayList<Integer>();
 				beforeOutPort.add(portID+CiscoParser.PORT_TYPE_MULTIPLIER*CiscoParser.INTERMEDIATE_PORT_TYPE_CONST);
@@ -513,9 +513,9 @@ public class CiscoParser implements Parser{
 			for(String port: this.portToID.keySet()) {
 				if((!port.equals("self"))&&(!allAccessPorts.contains(port))) {
 					int portID = this.portToID.get(port);
-					AbstractIP match = AbstractIPFactory.generateAbstractIP(this.cHeader.getFormat().get("length"),'x');
-					AbstractIP mask = AbstractIPFactory.generateAbstractIP(this.cHeader.getFormat().get("length"),'1');
-					AbstractIP rewrite = AbstractIPFactory.generateAbstractIP(this.cHeader.getFormat().get("length"),'0');
+					Header match = HeaderFactory.generateHeader(this.cHeader.getFormat().get("length"),'x');
+					Header mask = HeaderFactory.generateHeader(this.cHeader.getFormat().get("length"),'1');
+					Header rewrite = HeaderFactory.generateHeader(this.cHeader.getFormat().get("length"),'0');
 					match.setField(cHeader.getFormat(), "vlan", 0, 0);
 					mask.setField(cHeader.getFormat(), "vlan", 0, 0);
 					rewrite.setField(cHeader.getFormat(), "vlan", defVlan, 0);
@@ -537,9 +537,9 @@ public class CiscoParser implements Parser{
 						System.out.println(testIndex);
 					}
 					//in -ports and match wildcard
-					AbstractIP match = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x');
-					AbstractIP mask = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'1');
-					AbstractIP rewrite = AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'0');
+					Header match = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x');
+					Header mask = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'1');
+					Header rewrite = HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'0');
 					match.setField(cHeader.getFormat(), "ip_dst", fwdRule.getIP().getIP(), subnet);
 					ArrayList<Integer> inPorts = new ArrayList<Integer>();
 					inPorts.add(this.switchID*CiscoParser.SWITCH_ID_MULTIPLIER);
@@ -959,9 +959,9 @@ public class CiscoParser implements Parser{
 		return -1;
 	}
 	
-	public ArrayList<AbstractIP> acl_dict_entry_to_wc(ACL dicEntry) {
-		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
-		result.add(AbstractIPFactory.generateAbstractIP(cHeader.getFormat().get("length"),'x'));
+	public ArrayList<Header> acl_dict_entry_to_wc(ACL dicEntry) {
+		ArrayList<Header> result = new ArrayList<Header>();
+		result.add(HeaderFactory.generateHeader(cHeader.getFormat().get("length"),'x'));
 		if(dicEntry.getIp_protocol()!=0) {
 			result.get(0).setField(cHeader.getFormat(), "ip_proto", dicEntry.getIp_protocol(), 0);
 		}
@@ -970,9 +970,9 @@ public class CiscoParser implements Parser{
 
 		//tp_src
 		HashMap<Integer,Integer> tpSrcMatches = Helper.range_to_wildcard(dicEntry.getTransport_src_begin(), dicEntry.getTransport_src_end(), 16);
-		ArrayList<AbstractIP> tmp = new ArrayList<AbstractIP>();
+		ArrayList<Header> tmp = new ArrayList<Header>();
 		for(int tpSrcKey: tpSrcMatches.keySet()) {
-			AbstractIP w = AbstractIPFactory.generateAbstractIP(result.get(0));
+			Header w = HeaderFactory.generateHeader(result.get(0));
 			w.setField(cHeader.getFormat(), "transport_src", tpSrcKey, tpSrcMatches.get(tpSrcKey));
 			tmp.add(w);
 		}
@@ -980,10 +980,10 @@ public class CiscoParser implements Parser{
 
 		//tp_dst
 		HashMap<Integer,Integer> tpDstMatches = Helper.range_to_wildcard(dicEntry.getTransport_dst_begin(), dicEntry.getTransport_dst_end(), 16);
-		tmp = new ArrayList<AbstractIP>();
+		tmp = new ArrayList<Header>();
 		for(int tpDstKey: tpDstMatches.keySet()) {
-			for(AbstractIP r: result) {
-				AbstractIP w = AbstractIPFactory.generateAbstractIP(r);
+			for(Header r: result) {
+				Header w = HeaderFactory.generateHeader(r);
 				w.setField(cHeader.getFormat(), "transport_dst", tpDstKey, tpDstMatches.get(tpDstKey));
 				tmp.add(w);
 			}
@@ -992,10 +992,10 @@ public class CiscoParser implements Parser{
 		
 		//tp_ctrl
 		HashMap<Integer,Integer> tpCtrlMatches = Helper.range_to_wildcard(dicEntry.getTransport_ctrl_begin(), dicEntry.getTransport_ctrl_end(), 8);
-		tmp = new ArrayList<AbstractIP>();
+		tmp = new ArrayList<Header>();
 		for(int tpCtrlKey: tpCtrlMatches.keySet()) {
-			for(AbstractIP r: result) {
-				AbstractIP w = AbstractIPFactory.generateAbstractIP(r);
+			for(Header r: result) {
+				Header w = HeaderFactory.generateHeader(r);
 				w.setField(cHeader.getFormat(), "transport_ctrl", tpCtrlKey, tpCtrlMatches.get(tpCtrlKey));
 				tmp.add(w);
 			}

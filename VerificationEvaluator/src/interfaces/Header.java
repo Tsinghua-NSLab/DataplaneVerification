@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import bean.basis.Ip;
 
@@ -24,6 +25,8 @@ public interface Header{
 	Header copyMinus(Header header);
 	//void diffHS(AbstractIP header);
 	
+	void rewrite(Header mask, Header rewrite);
+	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);
 	//int count();
 	
 	Header copy();
@@ -32,5 +35,5 @@ public interface Header{
 	boolean isEmpty();
 	//Others
 	void cleanUp();
-	//void pushAppliedTfRule(String ruleID, int inPort);
+	void pushAppliedTfRule(String ruleID, int inPort);
 }

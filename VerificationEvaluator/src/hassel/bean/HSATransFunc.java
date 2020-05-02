@@ -31,28 +31,16 @@ public class HSATransFunc{
 		}
 		//check if match pattern matches and port is in in_ports.
 		Header newHS = input.getHdr().copyAnd(rule.getMatch());
-		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			for(Influence inf:TF.idToAffectedBy.get(rule.getId())) {
 				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
-					newHS.diffHS(inf.getIntersect());
+					newHS.minus(inf.getIntersect());
 				}
 			}
 			//apply mask,rewrite to all elements in hs_list and hs_diff, 
             //considering the cardinality.
-			for(int i = 0; i<newHS.getHsList().size();i++) {
-				//TODO how rewrite? tf.py line 461
-				int card = newHS.getHsList().get(i).rewrite(rule.getMask(), rule.getRewrite());
-				ArrayList<AbstractIP> newDiffList = new ArrayList<AbstractIP>();
-				for(int j = 0; j<newHS.getHsDiff().get(i).size();j++) {
-					int diffCard = newHS.getHsDiff().get(i).get(j).rewrite(rule.getMask(), rule.getRewrite());
-					if(diffCard==card) {
-						newDiffList.add(newHS.getHsDiff().get(i).get(j));
-					}
-				}
-				newHS.getHsDiff().set(i, newDiffList);
-			}
-			newHS.cleanUp();
-			if(newHS.count() == 0) {
+			newHS.rewrite(rule.getMask(), rule.getRewrite());
+			if(newHS.isEmpty()) {
 				appliedRules.add(rule.getId());
 				return result;
 			}
@@ -77,16 +65,16 @@ public class HSATransFunc{
 		}
 		//check if match pattern matches and port is in in_ports.
 		Header newHS = input.getHdr().copyAnd(rule.getMatch());
-		if(newHS.count()>0&&rule.getInPorts().contains(input.getPort())) {
+		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			if(!TF.isUncovered) {
 				for(Influence inf:TF.idToAffectedBy.get(rule.getId())) {
 					if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
-						newHS.diffHS(inf.getIntersect());
+						newHS.minus(inf.getIntersect());
 					}
 				}
 			}
 			newHS.cleanUp();
-			if(newHS.count()==0) {
+			if(newHS.isEmpty()) {
 				appliedRules.add(rule.getId());
 				return result;
 			}

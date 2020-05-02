@@ -74,7 +74,6 @@ public class Wildcard implements AbstractIP{
 	
 	@Override
 	public void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask) {
-		//TODO need test
 		int fieldLength = hsFormat.get(field+"_len");
 		int startPos = hsFormat.get(field + "_pos");
 		for(int i = startPos; i<startPos+fieldLength-rightMask; i++) {

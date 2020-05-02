@@ -5,13 +5,11 @@ import java.util.HashMap;
 
 import bean.basis.Influence;
 import bean.basis.Rule;
-import interfaces.AbstractIP;
+import interfaces.Header;
 
 public class RuleFactory{
 	public static ArrayList<Rule> ruleDecouple(ArrayList<Rule> rules){
 		ArrayList<Rule> result = new ArrayList<Rule>();
-		HashMap<String, ArrayList<Influence>> idToAffectedBy = new HashMap<String, ArrayList<Influence>>();
-		HashMap<String, ArrayList<Rule>> idToInfluenceOn = new HashMap<String, ArrayList<Rule>>();
 		return result;
 	}
 	public static ArrayList<Rule> ruleDecouple(HashMap<String, Rule> idToRule, HashMap<String, ArrayList<Influence>> idToAffectedBy){
@@ -39,20 +37,16 @@ public class RuleFactory{
 	public static ArrayList<Rule> ruleDecoupleSingle(Rule rule, Influence influence){
 		ArrayList<Rule> result = new ArrayList<Rule>();
 		if(rule.getInPorts().equals(influence.getPorts())) {
-			ArrayList<AbstractIP> minusIPs = rule.getMatch().minus(influence.getIntersect());
-			for(AbstractIP minusIP:minusIPs) {
-				result.add(new Rule(rule,minusIP));
-			}
+			Header minusIP = rule.getMatch().copyMinus(influence.getIntersect());
+			result.add(new Rule(rule,minusIP));
 		}else {
 			ArrayList<Integer> otherPorts = new ArrayList<Integer>();//influenced ports
 			otherPorts.addAll(rule.getInPorts());
 			otherPorts.removeAll(influence.getPorts());
 			result.add(new Rule(rule, otherPorts));
 			rule.getInPorts().removeAll(otherPorts);
-			ArrayList<AbstractIP> minusIPs = rule.getMatch().minus(influence.getIntersect());
-			for(AbstractIP minusIP:minusIPs) {
-				result.add(new Rule(rule,minusIP));
-			}
+			Header minusIP = rule.getMatch().copyMinus(influence.getIntersect());
+			result.add(new Rule(rule,minusIP));
 		}
 			
 		return result;
@@ -73,7 +67,7 @@ public class RuleFactory{
 						;
 					commonPorts.add(inPort);
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = HeaderFactory.generateHeader(rules.get(i).getMatch());
 				intersect.and(newRule.getMatch());
 				if (!intersect.isEmpty() && commonPorts.size() > 0) {
 					idToAffectedBy.get(newRule.getId()).add(new Influence(rules.get(i), intersect, commonPorts));
@@ -92,7 +86,7 @@ public class RuleFactory{
 						;
 					commonPorts.add(inPort);
 				}
-				AbstractIP intersect = AbstractIPFactory.generateAbstractIP(rules.get(i).getMatch());
+				Header intersect = HeaderFactory.generateHeader(rules.get(i).getMatch());
 				intersect.and(newRule.getMatch());
 				if (!intersect.isEmpty() && commonPorts.size() > 0) {
 					idToInfluenceOn.get(newRule.getId()).add(rules.get(i));

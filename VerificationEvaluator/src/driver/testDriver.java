@@ -2,17 +2,14 @@ package driver;
 
 import java.util.ArrayList;
 
-import bean.Network;
 import bean.basis.BasicTF;
 import bean.basis.Node;
 import bean.basis.Rule;
-import factory.AbstractIPFactory;
+import factory.HeaderFactory;
 import hassel.bean.HS;
 import hassel.bean.HSATransFunc;
 import hassel.bean.HSAVerifier;
-import interfaces.AbstractIP;
 import interfaces.Header;
-import interfaces.TransferFunc;
 
 public class testDriver{
 	public static void main(String[] args) {
@@ -23,7 +20,7 @@ public class testDriver{
 		Rule rule;
 		ArrayList<Integer> inPorts;
 		ArrayList<Integer> outPorts;
-		AbstractIP ip;
+		Header ip;
 		//rule1: inport:1-1 dst:10x src:src outport:1-3
 		rule = new Rule();
 		inPorts = new ArrayList<Integer>();
@@ -32,7 +29,7 @@ public class testDriver{
 		outPorts.add(13);
 		rule.setInPorts(inPorts);
 		rule.setOutPorts(outPorts);
-		ip = AbstractIPFactory.generateAbstractIP("10x01x");
+		ip = HeaderFactory.generateHeader("10x01x");
 		rule.setMatch(ip);
 		testNTF.addFwdRule(rule);
 		//rule2: inport:1-1 dst:1xx src:xxx outport:1-2
@@ -43,7 +40,7 @@ public class testDriver{
 		outPorts.add(12);
 		rule.setInPorts(inPorts);
 		rule.setOutPorts(outPorts);
-		ip = AbstractIPFactory.generateAbstractIP("1xxxxx");
+		ip = HeaderFactory.generateHeader("1xxxxx");
 		rule.setMatch(ip);
 		testNTF.addFwdRule(rule);
 		//rule3: inport:2-1 2-2 dst:10x src:xxx outport:2-3
@@ -55,7 +52,7 @@ public class testDriver{
 		outPorts.add(23);
 		rule.setInPorts(inPorts);
 		rule.setOutPorts(outPorts);
-		ip = AbstractIPFactory.generateAbstractIP("10xxxx");
+		ip = HeaderFactory.generateHeader("10xxxx");
 		rule.setMatch(ip);
 		testNTF.addFwdRule(rule);
 		//rule4: inport:3-1 dst:1xx src:xxx outport:3-3// rewrite:dst[1]=0
@@ -66,7 +63,7 @@ public class testDriver{
 		outPorts.add(33);
 		rule.setInPorts(inPorts);
 		rule.setOutPorts(outPorts);
-		ip = AbstractIPFactory.generateAbstractIP("xxx1xx");
+		ip = HeaderFactory.generateHeader("xxx1xx");
 		rule.setMatch(ip);
 		testNTF.addFwdRule(rule);
 		//rule5: inport:3-1 dst:xxx src:1xx outport:3-3
@@ -77,7 +74,7 @@ public class testDriver{
 		outPorts.add(32);
 		rule.setInPorts(inPorts);
 		rule.setOutPorts(outPorts);
-		ip = AbstractIPFactory.generateAbstractIP("1xxxxx");
+		ip = HeaderFactory.generateHeader("1xxxxx");
 		rule.setMatch(ip);
 		testNTF.addFwdRule(rule);
 		
@@ -112,7 +109,7 @@ public class testDriver{
 				
 		//initial input node
 		HS inputHeader = new HS(6);
-		inputHeader.add(AbstractIPFactory.generateAbstractIP("xxxxxx"));
+		inputHeader.add(HeaderFactory.generateHeader("xxxxxx"));
 		Node input = new Node(inputHeader, 11);
 		//initial outPorts
 		outPorts = new ArrayList<Integer>();
