@@ -1,5 +1,4 @@
 package apverifier.bean;
 
-public class APVVerifier{
-	
+public class APVVerifier {
 }
