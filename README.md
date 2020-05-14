@@ -9,10 +9,12 @@ https://kdocs.cn/l/s6se8TsZR?f=101
 https://www.overleaf.com/read/ntkhmyzbhmgj
 
 # TODO list
-List existing works
+~~List existing works~~
 
-Replicate existing works
+~~Replicate existing works~~
 
-Combine different packet expression and network model
+~~Combine different packet expression and network model~~
+
+Do experiments
 
 Write paper
