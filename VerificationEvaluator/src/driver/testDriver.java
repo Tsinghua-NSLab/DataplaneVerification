@@ -2,6 +2,7 @@ package driver;
 
 import java.util.ArrayList;
 
+import apverifier.bean.APHeader;
 import bean.basis.BasicTF;
 import bean.basis.Node;
 import bean.basis.Rule;
@@ -21,6 +22,7 @@ public class testDriver{
 		ArrayList<Integer> inPorts;
 		ArrayList<Integer> outPorts;
 		Header ip;
+		ip = HeaderFactory.generateHeader("xxxx01");
 		//rule1: inport:1-1 dst:10x src:src outport:1-3
 		rule = new Rule();
 		inPorts = new ArrayList<Integer>();
@@ -108,8 +110,7 @@ public class testDriver{
 		testTTF.addLinkRule(rule);
 				
 		//initial input node
-		HS inputHeader = new HS(6);
-		inputHeader.add(HeaderFactory.generateHeader("xxxxxx"));
+		APHeader inputHeader = (APHeader)HeaderFactory.generateHeader("xxxxxx");
 		Node input = new Node(inputHeader, 11);
 		//initial outPorts
 		outPorts = new ArrayList<Integer>();

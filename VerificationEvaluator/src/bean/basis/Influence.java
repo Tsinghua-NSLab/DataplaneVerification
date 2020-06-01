@@ -9,7 +9,6 @@ public class Influence{
 	Rule influencedBy = null;
 	Header intersect = null;
 	ArrayList<Integer> ports = null;
-	
 	public Influence(Rule influencedBy, Header intersect, ArrayList<Integer> ports) {
 		super();
 		this.influencedBy = influencedBy;

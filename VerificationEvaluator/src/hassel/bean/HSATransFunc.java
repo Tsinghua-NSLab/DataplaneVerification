@@ -8,8 +8,9 @@ import bean.basis.Node;
 import bean.basis.Rule;
 import interfaces.AbstractIP;
 import interfaces.Header;
+import interfaces.TransferFunc;
 
-public class HSATransFunc{
+public class HSATransFunc implements TransferFunc{
 	BasicTF TF;
 	
 	public HSATransFunc(BasicTF TF) {
@@ -33,7 +34,7 @@ public class HSATransFunc{
 		Header newHS = input.getHdr().copyAnd(rule.getMatch());
 		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			for(Influence inf:TF.idToAffectedBy.get(rule.getId())) {
-				if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
+				if(inf.getPorts().contains(input.getPort())) {//&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
 					newHS.minus(inf.getIntersect());
 				}
 			}
@@ -46,6 +47,9 @@ public class HSATransFunc{
 			}
 			newHS.pushAppliedTfRule(rule.getId(), input.getPort());
 			appliedRules.add(rule.getId());
+			for(int outPort: modOutPorts) {
+				result.add(new Node(newHS,outPort));
+			}
 		}
 		return result;
 	}
@@ -68,7 +72,7 @@ public class HSATransFunc{
 		if((!newHS.isEmpty())&&rule.getInPorts().contains(input.getPort())) {
 			if(!TF.isUncovered) {
 				for(Influence inf:TF.idToAffectedBy.get(rule.getId())) {
-					if(inf.getPorts().contains(input.getPort())&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
+					if(inf.getPorts().contains(input.getPort())) {//&&(appliedRules==null||appliedRules.contains(inf.getInfluencedBy().getId()))) {
 						newHS.minus(inf.getIntersect());
 					}
 				}

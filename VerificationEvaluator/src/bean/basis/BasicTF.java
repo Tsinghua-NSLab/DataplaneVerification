@@ -39,6 +39,14 @@ public class BasicTF{
 		return prefixID+nextID;
 	}
 	
+	public ArrayList<Rule> getRules(){
+		return this.rules;
+	}
+	
+	public HashMap<String, Rule> getIdToRule(){
+		return this.idToRule;
+	}
+	
 	public void addFwdRule(Rule rule) {
 		addFwdRule(rule,-1);
 	}
@@ -243,6 +251,23 @@ public class BasicTF{
 		rules = result;
 		idToRule = newIdToRule;
 		isUncovered = true;
+		//inport and outport
+		this.inportToRule.clear();
+		this.outportToRule.clear();
+		for(Rule rule:rules) {
+			for(int inport:rule.getInPorts()) {
+				if(!this.inportToRule.containsKey(inport)) {
+					this.inportToRule.put(inport, new ArrayList<Rule>());
+				}
+				this.inportToRule.get(inport).add(rule);
+			}
+			for(int outport:rule.getOutPorts()) {
+				if(!this.outportToRule.containsKey(outport)) {
+					this.outportToRule.put(outport, new ArrayList<Rule>());
+				}
+				this.outportToRule.get(outport).add(rule);
+			}
+		}
 		this.idToAffectedBy.clear();
 		this.idToInfluenceOn.clear();
 	}

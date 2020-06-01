@@ -5,11 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import bean.basis.BasicTF;
-import device.RawDevice;
 import factory.ParserFactory;
-import parser.CiscoParser;
 import interfaces.Parser;
-import interfaces.TransferFunc;
 
 public class Network{
 	ArrayList<Link> links = new ArrayList<Link>();

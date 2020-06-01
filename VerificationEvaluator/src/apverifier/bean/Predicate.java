@@ -1,54 +1,59 @@
 package apverifier.bean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
-import bean.basis.Rule;
-import factory.AbstractIPFactory;
-import interfaces.AbstractIP;
+import factory.HeaderFactory;
+import interfaces.Header;
 
 public class Predicate{
-	Integer Index = -1;
-	ArrayList<AbstractIP> headers = new ArrayList<AbstractIP>();
-	ArrayList<String> containedRuleIDs = new ArrayList<String>();
+	Integer Id = -1;
+	Header header = null;
+	HashSet<String> containedRuleIDs = new HashSet<String>();
 
 	public Predicate() {
 		
 	}
+	public Predicate(Header header) {
+		this.header = header.copy();
+	}
 	public Predicate(Predicate predicate) {
-		this.Index = predicate.Index;
-		for(AbstractIP header:predicate.headers) {
-			this.headers.add(AbstractIPFactory.generateAbstractIP(header));
-		}
+		this.Id = predicate.Id;
+		this.header =predicate.getHeader().copy();
 		this.containedRuleIDs.addAll(predicate.getContainedRuleIDs());
 	}
 	public boolean isEmpty() {
-		return headers.isEmpty();
+		return header.isEmpty();
 	}
-	public Integer getIndex() {
-		return Index;
+	public Integer getId() {
+		return Id;
 	}
-	public void setIndex(Integer index) {
-		Index = index;
+	public void setId(Integer id) {
+		Id = id;
 	}
-	public ArrayList<AbstractIP> getHeaders() {
-		return headers;
+	public Header getHeader() {
+		return header;
 	}
-	public void setHeaders(ArrayList<AbstractIP> headers) {
-		this.headers = headers;
+	public void setHeader(Header header) {
+		this.header = header;
 	}
-	public ArrayList<String> getContainedRuleIDs() {
+	public HashSet<String> getContainedRuleIDs() {
 		return containedRuleIDs;
 	}
-	public void setContainedRuleIDs(ArrayList<String> containedRuleIDs) {
+	public void setContainedRuleIDs(HashSet<String> containedRuleIDs) {
 		this.containedRuleIDs = containedRuleIDs;
 	}
 	public Predicate complement() {
-		Predicate result = new Predicate();
-		ArrayList<AbstractIP> temp = new ArrayList<AbstractIP>();
-		for(AbstractIP header:this.getHeaders()) {
-			temp.addAll(header.complement());
-			ArrayList<AbstractIP> intersect = new ArrayList<AbstractIP>();
-		}
+		return new Predicate(header.copyComplement());
+	}
+	public void and(Predicate other) {
+		this.header.and(other.getHeader());
+		this.containedRuleIDs.addAll(other.getContainedRuleIDs());
+	}
+	public Predicate copyAnd(Predicate other){
+		Predicate result = new Predicate(this);
+		result.getHeader().and(other.getHeader());
+		result.getContainedRuleIDs().addAll(other.getContainedRuleIDs());
 		return result;
 	}
 }

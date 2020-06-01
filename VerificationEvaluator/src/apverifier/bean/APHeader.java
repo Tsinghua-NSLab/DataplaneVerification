@@ -4,14 +4,13 @@ import java.util.HashMap;
 
 import bean.basis.Ip;
 import interfaces.Header;
-import net.sf.javabdd.BDD;
-import net.sf.javabdd.BDDFactory;
+import net.sf.javabdd.*;
 
 public class APHeader implements Header {
-
+	
 	private static BDDFactory factory = BDDFactory.init("j", 1000, 1000);
 	public BDD bdd;
-	private int length = 1000;
+	private int length = -1;
 	// TODO: it is ok to make the header's length variable but I leave it to future
 	// work. Because when we want to use and/or/not operation with javabdd, it is
 	// necessary to make sure that the bdds are in the same factory!
@@ -24,6 +23,71 @@ public class APHeader implements Header {
 		// All input to make bdd equal '1' --> the header set
 	}
 
+	public APHeader(int length, char bit) {
+		this.length = 1000;
+		this.bdd = factory.zero();
+		if(bit == 'x') {
+			for (int i = 0; i < length; i++) {
+				this.bdd.orWith(factory.ithVar(i));
+				// First, let us make all bits of the field is non-sense, which means the field
+				// is xxxxx.
+			}
+		}else if(bit == '1') {
+			for (int i = 0; i < length; i++) {
+				this.bdd.orWith(factory.ithVar(i));
+				// First, let us make all bits of the field is non-sense, which means the field
+				// is xxxxx.
+			}
+			for (int i = 0; i < length; i++) {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos));
+			}
+		}else if(bit == '0') {
+			for (int i = 0; i < length; i++) {
+				this.bdd.orWith(factory.ithVar(i));
+				// First, let us make all bits of the field is non-sense, which means the field
+				// is xxxxx.
+			}
+			for (int i = 0; i < length; i++) {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+			}
+		}else if(bit == 'z') {
+			for (int i = 0; i < length; i++) {
+				this.bdd.orWith(factory.ithVar(i));
+				// First, let us make all bits of the field is non-sense, which means the field
+				// is xxxxx.
+			}
+			for (int i = 0; i < length; i++) {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos));
+				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+			}
+		}
+	}
+	
+	public APHeader(String wc) {
+		this.length = wc.length();
+		this.bdd = factory.one();
+		for(int i = 0; i<length; i++) {
+			//this.bdd.orWith(factory.ithVar(i));
+			if(wc.charAt(i)=='x') {
+			}else if(wc.charAt(i)=='1') {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos));
+			}else if(wc.charAt(i)=='0') {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+			}else if(wc.charAt(i)=='z') {
+				int setPos = length - (i + 1); // The position of the required location
+				this.bdd = this.bdd.and(factory.ithVar(setPos));
+				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+			}else {
+				System.out.println("Error, invalied string");
+			}
+		}
+	}
+	
 	/* Get Operation */
 	public int getLength() {
 		return this.length;

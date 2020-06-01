@@ -1,5 +1,6 @@
 package factory;
 
+import apverifier.bean.APHeader;
 import hassel.bean.HS;
 import interfaces.Header;
 
@@ -9,6 +10,8 @@ public class HeaderFactory{
 			return null;
 		}else if(type == "HS") {
 			return other.copy();
+		}else if(type == "APHeader") {
+			return other.copy();
 		}
 		return null;
 	}
@@ -17,6 +20,9 @@ public class HeaderFactory{
 			HS result = new HS(length);
 			result.add(AbstractIPFactory.generateAbstractIP(length, bit));
 			return result;
+		}else if(type == "APHeader") {
+			APHeader result = new APHeader(length,bit);	
+			return result;
 		}
 		return null;
 	}
@@ -24,6 +30,9 @@ public class HeaderFactory{
 		if(type == "HS") {
 			HS result = new HS(wc.length());
 			result.add(AbstractIPFactory.generateAbstractIP(wc));
+			return result;
+		}else if(type == "APHeader") {
+			APHeader result = new APHeader(wc);
 			return result;
 		}
 		return null;

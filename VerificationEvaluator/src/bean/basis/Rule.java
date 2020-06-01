@@ -163,5 +163,11 @@ public class Rule{
 	//public void setInfluenceOn(ArrayList<Rule> influenceOn) {
 	//	this.influenceOn = influenceOn;
 	//}
-	
+	public void clear() {
+		this.match = null;
+		this.mask = null;
+		this.rewrite = null;
+		this.inverseMatch = null;
+		this.inverseRewrite = null;
+	}
 }

@@ -16,7 +16,7 @@ public class HS implements Header{
 	int length = 0;
 	//ArrayList<Rule> lazyRules;//list of (tf,rule_id,port) that has been lazy evaluated
 	//ArrayList<Rule> appliedRules;//list of (tf,rule_id,port) that has been evaluated on this headerspace
-	ArrayList<String> appliedDevices = new ArrayList<String>();
+	//ArrayList<String> appliedDevices = new ArrayList<String>();
 	ArrayList<String> appliedRuleIDs = new ArrayList<String>();
 	ArrayList<Integer> appliedInport = new ArrayList<Integer>();
 	
@@ -148,6 +148,8 @@ public class HS implements Header{
 				deepCopy.getHsDiff().get(i).add(AbstractIPFactory.generateAbstractIP(wc));
 			}
 		}
+		deepCopy.appliedRuleIDs.addAll(this.appliedRuleIDs);
+		deepCopy.appliedInport.addAll(this.appliedInport);
 		return deepCopy;
 	}
 	

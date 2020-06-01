@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import bean.Network;
 import bean.basis.Node;
-import verifiers.FindReachability;;
+import factory.TransferFuncFactory;
 
 public class driver{
 	Network network = new Network();	
@@ -22,10 +22,11 @@ public class driver{
 	}
 	 */
 	public static void main(String args[]) {
-		driver test = new driver();
-		test.init();
-		Node node = new Node();
-		//FindReachability.findReachabilityByPropagation(test.network.getNTF(), test.network.getTTF(), node, new ArrayList<Integer>());
-		System.out.println(test);
+		Network network = new Network();
+		network.initStanford();
+		Node Pkt = new Node();
+		ArrayList<Integer> Ports = new ArrayList<Integer>();
+		ArrayList<Node> result = TransferFuncFactory.findReachabilityByPropagation(network.getNTF(), network.getTTF(), Pkt, Ports);
+		System.out.println(result);
 	}
 }
