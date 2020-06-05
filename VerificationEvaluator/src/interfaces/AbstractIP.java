@@ -11,7 +11,7 @@ public interface AbstractIP{
 	void and(AbstractIP other);
 	//void or(AbstractIP other);
 	//void xor(AbstractIP other);
-	void not();
+	//void not();
 	ArrayList<AbstractIP> complement();
 	ArrayList<AbstractIP> minus(AbstractIP other);
 	static ArrayList<AbstractIP> compressList(ArrayList<AbstractIP> l){

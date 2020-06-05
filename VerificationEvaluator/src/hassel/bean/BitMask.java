@@ -214,27 +214,51 @@ public class BitMask implements AbstractIP{
 //	}
 
 	@Override
-	public void not() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public ArrayList<AbstractIP> complement() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
+		for(int i = 0; i < this.length;i++) {
+			if(this.maskBit.get(i)) {
+				BitMask tmp = new BitMask(this.length, 'x');
+				tmp.maskBit.set(i);
+				tmp.mainBit.set(i, !this.mainBit.get(i));
+				result.add(tmp);
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public ArrayList<AbstractIP> minus(AbstractIP other) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
+		BitMask temp = new BitMask(this);
+		temp.and(other);
+		if(temp.isEmpty()) {
+			result.add(this);
+		}else {
+			ArrayList<AbstractIP> otherComples = other.complement();
+			for(AbstractIP otherComple: otherComples) {
+				otherComple.and(this);
+				if(!otherComple.isEmpty()) {
+					result.add(otherComple);
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
 	public int rewrite(AbstractIP mask, AbstractIP rewrite) {
-		// TODO Auto-generated method stub
-		return 0;
+		// TODO How rewrite?
+		if(mask.getClass().getName()=="hassel.bean.BitMask"&&rewrite.getClass().getName()=="hassel.bean.BitMask") {
+			BitMask maskBM = (BitMask)mask;
+			BitMask rewriteBM = (BitMask)rewrite;
+			int result = 0;
+			BitSet tmp1 = new BitSet();
+			return result;
+		}else {
+			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + mask.getClass().getName() +","+ rewrite.getClass().getName());
+		}
+		return -1;
 	}
 
 	@Override

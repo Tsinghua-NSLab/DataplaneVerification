@@ -127,11 +127,6 @@ public class Wildcard implements AbstractIP{
 	}
 	
 	@Override
-	public void not() {
-		this.wcBit.flip(0, length);
-	}
-	
-	@Override
 	public boolean equals(AbstractIP other) {
 		Wildcard tmp = new Wildcard(this);
 		tmp.xor(other);
@@ -260,7 +255,7 @@ public class Wildcard implements AbstractIP{
 			tmp1.and(rewriteWC.getWcBit());
 			tmp1.and(oddMask);
 			tmp2.and(maskWC.getWcBit());
-			tmp2.or(maskWC.getWcBit());
+			tmp2.or(rewriteWC.getWcBit());
 			tmp2.and(evenMask);
 			tmp1.or(tmp2);
 			wcBit=tmp1;
