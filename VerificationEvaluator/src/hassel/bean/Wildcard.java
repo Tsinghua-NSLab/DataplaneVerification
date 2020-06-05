@@ -98,7 +98,7 @@ public class Wildcard implements AbstractIP{
 		}
 	}
 	
-	@Override
+	//@Override
 	public void or(AbstractIP other) {
 		if(other.getClass().getName()=="hassel.bean.Wildcard") {
 			Wildcard otherWC = (Wildcard)other;
@@ -112,7 +112,7 @@ public class Wildcard implements AbstractIP{
 		}
 	}
 	
-	@Override
+	//@Override
 	public void xor(AbstractIP other) {
 		if(other.getClass().getName()=="hassel.bean.Wildcard") {
 			Wildcard otherWC = (Wildcard)other;
@@ -222,7 +222,7 @@ public class Wildcard implements AbstractIP{
 	@Override 
 	public ArrayList<AbstractIP> minus(AbstractIP other){
 		ArrayList<AbstractIP> result = new ArrayList<AbstractIP>();
-		AbstractIP temp = new Wildcard(this.length);
+		Wildcard temp = new Wildcard(this.length);
 		temp.or(this);
 		temp.and(other);
 		if(temp.isEmpty()) {

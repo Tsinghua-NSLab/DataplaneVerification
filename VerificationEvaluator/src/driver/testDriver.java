@@ -110,7 +110,7 @@ public class testDriver{
 		testTTF.addLinkRule(rule);
 				
 		//initial input node
-		APHeader inputHeader = (APHeader)HeaderFactory.generateHeader("xxxxxx");
+		Header inputHeader = HeaderFactory.generateHeader("xxxxxx");
 		Node input = new Node(inputHeader, 11);
 		//initial outPorts
 		outPorts = new ArrayList<Integer>();

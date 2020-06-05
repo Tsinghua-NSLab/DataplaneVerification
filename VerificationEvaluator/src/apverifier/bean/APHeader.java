@@ -239,7 +239,7 @@ public class APHeader implements Header {
 
 	@Override
 	public void cleanUp() {
-		this.bdd.free();
+		//this.bdd.free();
 	}
 
 	@Override

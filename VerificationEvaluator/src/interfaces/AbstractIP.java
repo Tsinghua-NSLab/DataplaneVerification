@@ -9,8 +9,8 @@ public interface AbstractIP{
 	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);
 	//Bit operation
 	void and(AbstractIP other);
-	void or(AbstractIP other);
-	void xor(AbstractIP other);
+	//void or(AbstractIP other);
+	//void xor(AbstractIP other);
 	void not();
 	ArrayList<AbstractIP> complement();
 	ArrayList<AbstractIP> minus(AbstractIP other);

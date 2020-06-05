@@ -58,7 +58,7 @@ public class HSATransFunc implements TransferFunc{
 		ArrayList<Node> result = new ArrayList<Node>();
 		ArrayList<Integer> modOutPorts = new ArrayList<Integer>();
 		modOutPorts.addAll(rule.getOutPorts());
-		//If not sedning on receiving port, remove it from outports.
+		//If not sending on receiving port, remove it from outports.
 		if(!TF.sendOnReceivingPort&&modOutPorts.contains(input.getPort())) {
 			modOutPorts.remove(modOutPorts.indexOf(input.getPort()));
 		}
