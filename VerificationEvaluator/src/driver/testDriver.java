@@ -22,7 +22,6 @@ public class testDriver{
 		ArrayList<Integer> inPorts;
 		ArrayList<Integer> outPorts;
 		Header ip;
-		ip = HeaderFactory.generateHeader("xxxx01");
 		//rule1: inport:1-1 dst:10x src:src outport:1-3
 		rule = new Rule();
 		inPorts = new ArrayList<Integer>();

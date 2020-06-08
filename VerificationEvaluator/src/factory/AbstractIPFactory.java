@@ -2,6 +2,7 @@ package factory;
 
 import hassel.bean.Wildcard;
 import interfaces.AbstractIP;
+import hassel.bean.BitMask;
 
 public class AbstractIPFactory{
 	private static AbstractIP generateAbstractIP(String type, AbstractIP other) {
@@ -9,18 +10,24 @@ public class AbstractIPFactory{
 			return null;
 		}else if(type == "Wildcard") {
 			return new Wildcard((Wildcard)other);
+		}else if(type == "BitMask") {
+			return new BitMask((BitMask)other);
 		}
 		return null;
 	}
 	private static AbstractIP generateAbstractIP(String type, int length, char bit) {
 		if(type == "Wildcard") {
 			return new Wildcard(length, bit);
+		}else if(type == "BitMask") {
+			return new BitMask(length, bit);
 		}
 		return null;
 	}
 	private static AbstractIP generateAbstractIP(String type, String wc) {
 		if(type == "Wildcard") {
 			return new Wildcard(wc);
+		}else if(type == "BitMask") {
+			return new BitMask(wc);
 		}
 		return null;
 	}

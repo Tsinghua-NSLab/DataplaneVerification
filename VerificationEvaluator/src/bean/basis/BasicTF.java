@@ -167,6 +167,9 @@ public class BasicTF{
 				}
 			}
 		}
+		ArrayList<Rule> testInfluences = this.idToInfluenceOn.get(newRule.getId());
+		ArrayList<Influence> testAffectedBy = this.idToAffectedBy.get(newRule.getId());
+		System.out.print("");
 	}
 	
 	public void setFastLookupPointers(int position) {

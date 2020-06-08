@@ -99,6 +99,7 @@ public class BitMask implements AbstractIP{
 			BitMask otherBM = (BitMask)other;
 			if(this.length == otherBM.length) {
 				BitSet totalMask = new BitSet(length);
+				totalMask.set(0, length);
 				totalMask.and(this.maskBit);
 				totalMask.and(otherBM.maskBit);
 				
@@ -329,6 +330,7 @@ public class BitMask implements AbstractIP{
 			if(this.maskBit.get(i)) {
 				if(this.mainBit.get(i)) {
 					result = "1" + result;
+				} else {
 					result = "0" + result;
 				}
 			}else {
