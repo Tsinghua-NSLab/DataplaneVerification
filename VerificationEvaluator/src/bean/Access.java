@@ -1,6 +1,8 @@
 package bean;
 
-public class Access{
+import java.io.Serializable;
+
+public class Access implements Serializable{
 	String iface = null;
 	boolean inout=true;// true: in, false: out
 	int vlan = -1;

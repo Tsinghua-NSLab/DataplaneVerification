@@ -1,10 +1,12 @@
 package bean;
 
+import java.io.Serializable;
+
 /**
  * @author skingFD
  * A link in the network
  */
-public class Link{
+public class Link implements Serializable{
 	String Device1 = null;
 	String Device2 = null;
 	String Iface1 = null;

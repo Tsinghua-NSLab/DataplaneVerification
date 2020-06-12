@@ -1,8 +1,9 @@
 package bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Vlan{
+public class Vlan implements Serializable{
 	ArrayList<String> Access = new ArrayList<String>();
 	ArrayList<String> Trunk = new ArrayList<String>();
 	

@@ -1,6 +1,8 @@
 package bean.basis;
 
-public class Ip{
+import java.io.Serializable;
+
+public class Ip implements Serializable{
 	int IP = -1;
 	//int IPMask = 0;
 	int Subnet = -1;
@@ -105,5 +107,10 @@ public class Ip{
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return this.intToDottedIp(this.IP)+"/"+(32-this.Subnet);
 	}
 }

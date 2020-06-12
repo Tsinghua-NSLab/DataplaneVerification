@@ -1,14 +1,19 @@
 package bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import bean.basis.BasicTF;
+import bean.basis.Rule;
+import factory.HeaderFactory;
 import factory.ParserFactory;
+import interfaces.Header;
 import interfaces.Parser;
+import utils.General;
 
-public class Network{
+public class Network implements Serializable{
 	ArrayList<Link> links = new ArrayList<Link>();
 	ArrayList<GraphNode> graph = new ArrayList<GraphNode>();
 	HashMap<String, Parser> routers = new HashMap<String, Parser>();
@@ -20,6 +25,103 @@ public class Network{
 	public Network() {
 		
 	}
+	
+	public void initFattree() {
+		//layer = 3
+		int dNum = 2;
+		int pNum = 4;
+		int aNum = 4;
+		
+		int d2p_dNum = 2;
+		int d2p_pNum = 4;
+		int p2a_pNum = 2;
+		int p2a_aNum = 2;
+		
+		//Init a fattree test network
+		Rule rule;
+		ArrayList<Integer> inPorts;
+		ArrayList<Integer> outPorts;
+		Header ip;
+		rule = new Rule();
+		inPorts = new ArrayList<Integer>();
+		//Add TTF rules (transfer functions)
+		//Add a rules
+		for(int i = 0; i < 4; i++) {
+			//South forward
+			for(int j = 0; j < 4; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(1+i*10+k);	
+				}
+				for(int k = 0; k < 2; k++) {
+					inPorts.add(2+i*10+k);
+				}
+				outPorts.add(100+i*10+j);
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				ip = HeaderFactory.generateHeader(General.int2WC(i, 2)+General.int2WC(j, 2));
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		
+		//Add NTF rules (links)
+		//Add p2a links
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 2; j++) {
+				for(int k = 0; k < 2; k++) {
+					//North Link
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(200+i*2*10+j*10+k);
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(300+i*2*10+j+k*10);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				
+					//South Link
+					rule = new Rule();
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(200+i*2*10+j*10+k);
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(300+i*2*10+j+k*10);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				}
+			}
+		}
+		//Add d2p links
+		for(int i = 0; i < 1; i++) {
+			for(int j = 0; j < 4; j++) {
+				for(int k = 0; k < 2; k++) {
+					//North Link
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(400+i*4*10+j*10+k);
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(500+i*2*10+j+k*10);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				
+					//South Link
+					rule = new Rule();
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(400+i*4*10+j*10+k);
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(500+i*2*10+j+k*10);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				}
+			}
+		}
+	}
+	
 	public void initStanford() {
 		//Add routers
 		this.getRouters().put("bbra_rtr", ParserFactory.generateParser(1));
@@ -48,7 +150,9 @@ public class Network{
 			this.getRouters().get(rtrName).optimize_forwarding_table();
 			this.getRouters().get(rtrName).generate_port_ids(new HashSet<String>());
 			this.getRouters().get(rtrName).generate_transfer_function(NTF);
-			this.portToID.putAll(this.getRouters().get(rtrName).getPortToID());
+			for(String portName : this.getRouters().get(rtrName).getPortToID().keySet()) {
+				this.portToID.put(rtrName+"_"+portName, this.getRouters().get(rtrName).getPortToID().get(portName));
+			}
 		}
 		//Add links
 		this.getLinks().add(new Link("bbra_rtr","te7/3","goza_rtr","te2/1"));

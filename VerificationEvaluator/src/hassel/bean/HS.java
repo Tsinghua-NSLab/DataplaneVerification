@@ -1,5 +1,6 @@
 package hassel.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +9,7 @@ import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 import interfaces.Header;
 
-public class HS implements Header{
+public class HS implements Header,Serializable{
 	//hsList: list of all wildcards included
 	//hsDiff: a list of wildcard not included in the headerspace.
 	ArrayList<AbstractIP> hsList = new ArrayList<AbstractIP>();
@@ -316,7 +317,7 @@ public class HS implements Header{
 	}
 	
 	@Override 
-	public void setField(HashMap<String, Integer> hsFormat, String field, int value, int rightMask) {
+	public void setField(HashMap<String, Integer> hsFormat, String field, long value, int rightMask) {
 		for(AbstractIP abstractIP: hsList) {
 			abstractIP.setField(hsFormat, field, value, rightMask);
 		}

@@ -1,6 +1,8 @@
 package bean;
 
-public class Arp{
+import java.io.Serializable;
+
+public class Arp implements Serializable{
 	String Mac;
 	String Vlan;
 	

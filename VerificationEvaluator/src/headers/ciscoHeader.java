@@ -1,8 +1,9 @@
 package headers;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class ciscoHeader{
+public class ciscoHeader implements Serializable{
 	HashMap<String,Integer> format = new HashMap<String,Integer>();
 	
 	public ciscoHeader() {

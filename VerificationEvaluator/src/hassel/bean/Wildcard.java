@@ -1,12 +1,13 @@
 package hassel.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 
 import interfaces.AbstractIP;
 
-public class Wildcard implements AbstractIP{
+public class Wildcard implements AbstractIP,Serializable{
 	int length = 0;
 	BitSet wcBit = new BitSet();
 	
@@ -73,15 +74,21 @@ public class Wildcard implements AbstractIP{
 	}
 	
 	@Override
-	public void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask) {
+	public void setField(HashMap<String,Integer> hsFormat, String field, long value, int rightMask) {
 		int fieldLength = hsFormat.get(field+"_len");
 		int startPos = hsFormat.get(field + "_pos");
-		for(int i = startPos; i<startPos+fieldLength-rightMask; i++) {
-			wcBit.set(2*i + (value%2));
-			wcBit.clear(2*i + ((value%2)^0x1));
+		//for(int i = startPos; i<startPos+fieldLength-rightMask; i++) {
+		for(int i = startPos; i<startPos+fieldLength; i++) {
+			if((value&0x1)==0){
+				wcBit.set(2*i);
+				wcBit.clear(2*i + 1);
+			}else {
+				wcBit.set(2*i + 1);
+				wcBit.clear(2*i);
+			}
 			value = value>>>1;
 		}
-		wcBit.set(2*(startPos+fieldLength-rightMask), 2*(startPos+fieldLength));
+		wcBit.set(2*(startPos), 2*(startPos+rightMask));
 	}
 	
 	@Override

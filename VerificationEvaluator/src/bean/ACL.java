@@ -1,6 +1,8 @@
 package bean;
 
-public class ACL{
+import java.io.Serializable;
+
+public class ACL implements Serializable{
 	boolean action = true; //false: deny, true: permit
 	int src_ip = 0;
 	int src_ip_mask = 32;

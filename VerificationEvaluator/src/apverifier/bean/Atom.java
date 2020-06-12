@@ -137,7 +137,7 @@ public class Atom implements Header{
 	}
 
 	@Override
-	public void setField(HashMap<String, Integer> hsFormat, String field, int value, int rightMask) {
+	public void setField(HashMap<String, Integer> hsFormat, String field, long value, int rightMask) {
 		// TODO Auto-generated method stub
 	}
 

@@ -1,10 +1,11 @@
 package bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import bean.basis.Ip;
 
-public class FIB{
+public class FIB implements Serializable{
 	Ip ip;
 	String port;
 	String fileName;

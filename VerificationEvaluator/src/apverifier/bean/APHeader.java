@@ -182,7 +182,7 @@ public class APHeader implements Header {
 	}
 
 	@Override
-	public void setField(HashMap<String, Integer> hsFormat, String field, int value, int rightMask) {
+	public void setField(HashMap<String, Integer> hsFormat, String field, long value, int rightMask) {
 		// TODO Auto-generated method stub
 		// hsFormat: name(field) --> val(field length or position)
 		// field: string(hsFormat, field)
@@ -198,7 +198,7 @@ public class APHeader implements Header {
 		}
 		for (int i = rightMask; i < fieldLength; i++) {
 			int setPos = startPos + fieldLength - (i + 1); // The position of the required location
-			int setVal = (value >> i) & 0x01; // Get the value require of this location
+			int setVal = (int)((value >> i) & 0x01); // Get the value require of this location
 			if (setVal == 1) {
 				this.bdd = this.bdd.and(factory.ithVar(setPos));
 			} else {

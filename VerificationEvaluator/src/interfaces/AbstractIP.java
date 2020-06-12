@@ -6,7 +6,7 @@ import java.util.HashMap;
 public interface AbstractIP{
 	//Init
 	void setMask(int rightMask);
-	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);
+	void setField(HashMap<String,Integer> hsFormat, String field, long value, int rightMask);
 	//Bit operation
 	void and(AbstractIP other);
 	//void or(AbstractIP other);

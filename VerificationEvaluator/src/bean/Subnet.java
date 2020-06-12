@@ -1,6 +1,8 @@
 package bean;
 
-public class Subnet{
+import java.io.Serializable;
+
+public class Subnet implements Serializable{
 	int ip;
 	int subnet;
 	

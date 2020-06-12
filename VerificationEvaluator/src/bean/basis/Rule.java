@@ -1,12 +1,13 @@
 package bean.basis;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 import interfaces.Header;
 
-public class Rule{
+public class Rule implements Serializable{
 	String id = null;
 	ArrayList<Integer> inPorts = new ArrayList<Integer>();
 	ArrayList<Integer> outPorts = new ArrayList<Integer>();

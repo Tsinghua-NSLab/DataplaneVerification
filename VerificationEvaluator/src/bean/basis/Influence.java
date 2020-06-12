@@ -1,11 +1,12 @@
 package bean.basis;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import interfaces.AbstractIP;
 import interfaces.Header;
 
-public class Influence{
+public class Influence implements Serializable{
 	Rule influencedBy = null;
 	Header intersect = null;
 	ArrayList<Integer> ports = null;

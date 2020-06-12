@@ -2,6 +2,7 @@ package parser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,7 @@ import interfaces.Parser;
 import bean.basis.Rule;
 import utils.Helper;
 
-public class CiscoParser implements Parser{
+public class CiscoParser implements Parser,Serializable{
 	
 	HashMap<Integer, ArrayList<ACL>> ACLList = new HashMap<Integer, ArrayList<ACL>>();
     HashMap<Integer, ArrayList<String>> vlanSpanPorts = new HashMap<Integer, ArrayList<String>>();

@@ -1,5 +1,6 @@
 package bean.basis;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ import interfaces.Header;
 import interfaces.Parser;
 import interfaces.TransferFunc;
 
-public class BasicTF{	
+public class BasicTF implements Serializable{	
 	public int nextID = 0;
 	public String prefixID = "";
 	public ArrayList<Rule> rules = new ArrayList<Rule>();
@@ -192,6 +193,7 @@ public class BasicTF{
 		}
 		//rule-id based lookup table
 		this.idToRule.put(newRule.getId(), newRule);
+		System.out.print("");
 		//TODO: hash table set up
 	}
 	

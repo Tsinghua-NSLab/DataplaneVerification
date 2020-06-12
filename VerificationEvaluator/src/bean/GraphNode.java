@@ -1,8 +1,9 @@
 package bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GraphNode{
+public class GraphNode implements Serializable{
 	int portID;
 	public ArrayList<GraphNode> adjacent;
 	

@@ -77,20 +77,20 @@ public class BitMask implements AbstractIP{
 	}
 
 	@Override
-	public void setField(HashMap<String, Integer> hsFormat, String field, int value, int rightMask) {
+	public void setField(HashMap<String, Integer> hsFormat, String field, long value, int rightMask) {
 		int fieldLength = hsFormat.get(field+"_len");
 		int startPos = hsFormat.get(field + "_pos");
-		for(int i = startPos; i<startPos+fieldLength-rightMask; i++) {
-			if(value%2==0) {
-				maskBit.clear(i);
-				mainBit.set(i);
+		for(int i = startPos; i<startPos+fieldLength; i++) {
+			if((value&1L)==0) {
+				maskBit.set(i);
+				mainBit.clear(i);
 			}else {
 				maskBit.set(i);
 				mainBit.set(i);
 			}
 			value = value>>>1;
 		}
-		maskBit.clear(startPos+fieldLength-rightMask, startPos+fieldLength);
+		maskBit.clear(startPos, startPos+rightMask);
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public interface Header{
 	//void diffHS(AbstractIP header);
 	
 	void rewrite(Header mask, Header rewrite);
-	void setField(HashMap<String,Integer> hsFormat, String field, int value, int rightMask);
+	void setField(HashMap<String,Integer> hsFormat, String field, long value, int rightMask);
 	//int count();
 	
 	Header copy();

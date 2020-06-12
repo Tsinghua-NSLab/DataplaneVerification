@@ -1,6 +1,8 @@
 package bean;
 
-public class Port{
+import java.io.Serializable;
+
+public class Port implements Serializable{
 	int port_begin = -1;
 	int port_end = -1;
 	public int getPort_begin() {
