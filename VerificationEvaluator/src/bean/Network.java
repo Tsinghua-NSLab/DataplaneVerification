@@ -14,6 +14,7 @@ import interfaces.Parser;
 import utils.General;
 
 public class Network implements Serializable{
+	public ArrayList<Integer> hostIDs = new ArrayList<Integer>();//Test variable
 	ArrayList<Link> links = new ArrayList<Link>();
 	ArrayList<GraphNode> graph = new ArrayList<GraphNode>();
 	HashMap<String, Parser> routers = new HashMap<String, Parser>();
@@ -27,6 +28,11 @@ public class Network implements Serializable{
 	}
 	
 	public void initFattree() {
+		for(int i = 0; i<4; i++) {
+			for(int j = 0; j<4; j++) {
+				this.hostIDs.add(100+10*i+j);
+			}
+		}
 		//layer = 3
 		int dNum = 2;
 		int pNum = 4;
@@ -47,21 +53,88 @@ public class Network implements Serializable{
 		//Add TTF rules (transfer functions)
 		//Add a rules
 		for(int i = 0; i < 4; i++) {
-			//South forward
+			//South forward in a
 			for(int j = 0; j < 4; j++) {
 				rule = new Rule();
 				inPorts = new ArrayList<Integer>();
 				outPorts = new ArrayList<Integer>();
 				for(int k = 0; k < 4; k++) {
-					inPorts.add(1+i*10+k);	
+					inPorts.add(100 + i*10 + k);	
 				}
 				for(int k = 0; k < 2; k++) {
-					inPorts.add(2+i*10+k);
+					inPorts.add(200 + i*10 + k);
 				}
-				outPorts.add(100+i*10+j);
+				outPorts.add(100 + i*10 + j);
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
 				ip = HeaderFactory.generateHeader(General.int2WC(i, 2)+General.int2WC(j, 2));
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+			//North forward in a
+			for(int j = 0; j < 2; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(100 + i*10 + k);
+				}
+				outPorts.add(200 + i*10 + j);
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				ip = HeaderFactory.generateHeader("xx"+j+"x");
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		//Add p rules
+		for(int i = 0; i < 4; i++) {
+			//South forward in p
+			for(int j = 0; j < 2; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 2; k++) {
+					inPorts.add(300 + i*10 + k);
+					inPorts.add(400 + i*10 + k);
+				}
+				outPorts.add(300 + i*10 + j);
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				ip = HeaderFactory.generateHeader((i/2)+(j+"xx"));
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+			//North forward in p
+			for(int j = 0; j < 2; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 2; k++) {
+					inPorts.add(300 + i*10 + k);
+					inPorts.add(400 + i*10 + k);
+				}
+				outPorts.add(400 + i*10 + j);
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				ip = HeaderFactory.generateHeader(((i/2)^1)+(j+"xx"));
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		//Add d rules
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 4; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(500 + i*10 + k);
+				}
+				outPorts.add(500 + i*10 + j);
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				ip = HeaderFactory.generateHeader(General.int2WC(j, 2)+"xx");
 				rule.setMatch(ip);
 				this.NTF.addFwdRule(rule);
 			}

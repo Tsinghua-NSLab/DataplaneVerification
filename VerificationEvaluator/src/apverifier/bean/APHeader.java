@@ -24,44 +24,46 @@ public class APHeader implements Header {
 	}
 
 	public APHeader(int length, char bit) {
-		this.length = 1000;
-		this.bdd = factory.zero();
+		this.length = length;
+		this.bdd = factory.one();
 		if(bit == 'x') {
 			for (int i = 0; i < length; i++) {
-				this.bdd.orWith(factory.ithVar(i));
+				//this.bdd.orWith(factory.ithVar(i));
+				//this.bdd.orWith(factory.nithVar(i));
 				// First, let us make all bits of the field is non-sense, which means the field
 				// is xxxxx.
 			}
 		}else if(bit == '1') {
-			for (int i = 0; i < length; i++) {
-				this.bdd.orWith(factory.ithVar(i));
-				// First, let us make all bits of the field is non-sense, which means the field
-				// is xxxxx.
-			}
+			//for (int i = 0; i < length; i++) {
+			//	this.bdd.orWith(factory.ithVar(i));
+			//	this.bdd.orWith(factory.nithVar(i));
+			//	// First, let us make all bits of the field is non-sense, which means the field
+			//	// is xxxxx.
+			//}
 			for (int i = 0; i < length; i++) {
 				int setPos = length - (i + 1); // The position of the required location
 				this.bdd = this.bdd.and(factory.ithVar(setPos));
 			}
 		}else if(bit == '0') {
-			for (int i = 0; i < length; i++) {
-				this.bdd.orWith(factory.ithVar(i));
-				// First, let us make all bits of the field is non-sense, which means the field
-				// is xxxxx.
-			}
+			//for (int i = 0; i < length; i++) {
+			//	this.bdd.orWith(factory.ithVar(i));
+			//	// First, let us make all bits of the field is non-sense, which means the field
+			//	// is xxxxx.
+			//}
 			for (int i = 0; i < length; i++) {
 				int setPos = length - (i + 1); // The position of the required location
-				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+				this.bdd = this.bdd.and(factory.nithVar(setPos));
 			}
 		}else if(bit == 'z') {
-			for (int i = 0; i < length; i++) {
-				this.bdd.orWith(factory.ithVar(i));
-				// First, let us make all bits of the field is non-sense, which means the field
-				// is xxxxx.
-			}
+			//for (int i = 0; i < length; i++) {
+			//	this.bdd.orWith(factory.ithVar(i));
+			//	// First, let us make all bits of the field is non-sense, which means the field
+			//	// is xxxxx.
+			//}
 			for (int i = 0; i < length; i++) {
 				int setPos = length - (i + 1); // The position of the required location
 				this.bdd = this.bdd.and(factory.ithVar(setPos));
-				this.bdd = this.bdd.and(factory.ithVar(setPos).not());
+				this.bdd = this.bdd.and(factory.nithVar(setPos));
 			}
 		}
 	}
