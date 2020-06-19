@@ -252,6 +252,7 @@ public class HS implements Header,Serializable{
 		if(this.hsList.size() == 0) {
 			this.hsList.add(AbstractIPFactory.generateAbstractIP(this.length,'x'));
 			this.hsDiff = new ArrayList<ArrayList<AbstractIP>>();
+			this.hsDiff.add(new ArrayList<AbstractIP>());
 		}else {
 			ArrayList<HS> cHSList = new ArrayList<HS>();
 			for(int i = 0; i< this.hsList.size(); i++) {
@@ -410,6 +411,38 @@ public class HS implements Header,Serializable{
 			if(!flag) {
 				newHSList.add(this.getHsList().get(i));
 				newHSDiff.add(AbstractIP.compressList(this.getHsDiff().get(i)));
+			}
+		}
+		this.hsList = newHSList;
+		this.hsDiff = newHSDiff;
+		//Simple merge
+		newHSList = new ArrayList<AbstractIP>();
+		newHSDiff = new ArrayList<ArrayList<AbstractIP>>();
+		for(int i = 0; i< this.hsList.size(); i++) {
+			boolean flag = false;
+			for(int j = 0; j < this.hsList.size(); j++) {
+				if(i == j)continue;
+				boolean diffFlag = false;
+				for(AbstractIP iDiff: this.getHsDiff().get(i)) {
+					for(AbstractIP jDiff: this.getHsDiff().get(j)) {
+						if(!iDiff.contains(jDiff)) {
+							diffFlag = true;
+						}
+					}
+				}
+				if(diffFlag) {
+					continue;
+				}
+				if(this.getHsList().get(j).contains(this.getHsList().get(i))) {
+					if(j<i) {
+						flag = true;
+						break;
+					}
+				}
+			}
+			if(!flag) {
+				newHSList.add(this.getHsList().get(i));
+				newHSDiff.add(this.getHsDiff().get(i));
 			}
 		}
 		this.hsList = newHSList;
