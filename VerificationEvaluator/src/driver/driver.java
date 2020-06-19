@@ -26,21 +26,21 @@ public class driver{
 	
 	public static void singleTest() {
 		Network network = new Network();
-		network.initFattree2_4_4();
+		network.initFattree4_8_16();
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
 		Node Pkt = new Node();
-		Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
-		Pkt.setPort(11503);
+		Pkt.setHdr(HeaderFactory.generateHeader(256));
+		Pkt.setPort(10000);
 		ArrayList<Integer> Ports = new ArrayList<Integer>();
-		Ports.add(10000);
+		Ports.add(11503);
 		ArrayList<Node> result = TransferFuncFactory.findReachabilityByPropagation(network.getNTF(), network.getTTF(), Pkt, Ports);
 		System.out.println(result);
 	}
 	
 	public static void massTest() {
 		Network network = new Network();
-		network.initFattree2_4_4();
+		network.initFattree4_8_16();
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
 		long starttime = System.nanoTime();
@@ -50,7 +50,7 @@ public class driver{
 					continue;
 				}
 				Node Pkt = new Node();
-				Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
+				Pkt.setHdr(HeaderFactory.generateHeader(256));
 				Pkt.setPort(network.hostIDs.get(i));
 				ArrayList<Integer> Ports = new ArrayList<Integer>();
 				Ports.add(network.hostIDs.get(j));
@@ -64,7 +64,7 @@ public class driver{
 	}
 	
 	public static void main(String args[]) {
-		//singleTest();
-		massTest();
+		singleTest();
+		//massTest();
 	}
 }

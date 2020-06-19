@@ -23,6 +23,7 @@ public class APVTransFunc{
 		this.TF = TF;
 		generatePredicates();
 		setRules();
+		long stopTime = System.nanoTime();
 	}
 	public int generateNextID() {
 		return nextID++;

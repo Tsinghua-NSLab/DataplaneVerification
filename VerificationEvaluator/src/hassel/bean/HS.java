@@ -206,6 +206,7 @@ public class HS implements Header,Serializable{
 			this.hsList = newHSList;
 			this.hsDiff = newHSDiff;
 		}
+		this.cleanUp();
 	}
 	
 	public void and(AbstractIP wc) {
@@ -232,6 +233,8 @@ public class HS implements Header,Serializable{
 		}
 		this.hsList = newHSList;
 		this.hsDiff = newHSDiff;
+		this.cleanUp();
+		System.out.print("");
 	}
 	@Override
 	public Header copyAnd(Header other) {

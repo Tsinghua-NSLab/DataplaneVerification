@@ -9,6 +9,7 @@ import bean.basis.BasicTF;
 import bean.basis.Rule;
 import factory.HeaderFactory;
 import factory.ParserFactory;
+import factory.RuleFactory;
 import interfaces.Header;
 import interfaces.Parser;
 import utils.General;
@@ -208,6 +209,10 @@ public class Network implements Serializable{
 				}
 			}
 		}
+		long startTime = System.nanoTime();
+		RuleFactory.Preprocess(this.NTF);
+		long stopTime = System.nanoTime();
+		System.out.println(stopTime - startTime);
 	}
 	
 	public void initFattree2_4_4() {
@@ -376,6 +381,7 @@ public class Network implements Serializable{
 				}
 			}
 		}
+		RuleFactory.Preprocess(this.NTF);
 	}
 	
 	public void initStanford() {

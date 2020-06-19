@@ -1,6 +1,9 @@
 package factory;
 
+import java.util.HashSet;
+
 import apverifier.bean.APHeader;
+import apverifier.bean.Atom;
 import hassel.bean.HS;
 import interfaces.Header;
 
@@ -36,6 +39,15 @@ public class HeaderFactory{
 			return result;
 		}
 		return null;
+	}
+	public static Header generateHeader(int length) {
+		Atom header = new Atom(length);
+		HashSet<Integer> atomSet = new HashSet<Integer>();
+		for(int i = 0; i < length; i++) {
+			atomSet.add(i);
+		}
+		header.setAtomIndexs(atomSet);
+		return header;
 	}
 	
 	public static Header generateHeader(Header other) {
