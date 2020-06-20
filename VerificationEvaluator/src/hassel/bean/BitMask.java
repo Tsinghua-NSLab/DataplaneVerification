@@ -289,6 +289,13 @@ public class BitMask implements AbstractIP{
 		if(other.getClass().getName()=="hassel.bean.BitMask") {
 			BitMask otherBM = (BitMask)other;
 			if(this.length == otherBM.length) {
+				BitSet maskFeature = new BitSet(length);
+				maskFeature.or(maskBit);
+				maskFeature.or(maskBit);
+				maskFeature.xor(otherBM.maskBit);
+				if(!maskFeature.isEmpty()) {
+					return false;
+				}
 				BitSet feature = new BitSet(length);
 				feature.or(this.mainBit);
 				feature.and(this.maskBit);
