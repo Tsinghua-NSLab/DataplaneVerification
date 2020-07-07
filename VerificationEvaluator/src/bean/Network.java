@@ -66,6 +66,223 @@ public class Network implements Serializable{
 					inPorts.add(20000 + i * 100 + k);
 				}
 				outPorts.add(10000 + i * 100 + j);
+				String srcIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				String dstIP = General.int2WC(10, 8) + General.int2WC(i/4+1, 8) + General.int2WC(i%4+1, 8) + General.int2WC(j+1, 8);
+				String srcPort = "xxxxxxxxxxxxxxxx";
+				String dstPort = "xxxxxxxxxxxxxxxx";
+				String ecmp = "xx";
+				ip = HeaderFactory.generateHeader(srcIP+dstIP+srcPort+dstPort+ecmp);
+				//ip = HeaderFactory.generateHeader(General.int2WC(i, 4)+General.int2WC(j, 2)+"xx");
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		// Add north rules
+		for (int i = 0; i < 16; i++) {
+			for(int j = 0; j < 2; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(10000 + i * 100 + k);
+				}
+				for(int k = 0; k < 2; k++) {
+					inPorts.add(20000 + i * 100 + k);
+				}
+				outPorts.add(20000 + i * 100 + j);
+				String srcIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				String dstIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				String srcPort = "xxxxxxxxxxxxxxxx";
+				String dstPort = "xxxxxxxxxxxxxxxx";
+				String ecmp = "x"+General.int2WC(j, 1);
+				ip = HeaderFactory.generateHeader(srcIP+dstIP+srcPort+dstPort+ecmp);
+				//ip = HeaderFactory.generateHeader("xxxxxxx" + General.int2WC(j, 1));
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		// Add p rules
+		// Add south rules
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 2; j++) {
+				for(int k = 0; k < 4; k++) {
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					outPorts = new ArrayList<Integer>();
+					for(int l = 0; l < 4; l++) {
+						inPorts.add(30000 + i * 200 + j * 100 + l);
+					}
+					for(int l = 0; l < 2; l++) {
+						inPorts.add(40000 + i * 200 + j * 100 + l);
+					}
+					outPorts.add(30000 + i * 200 + j * 100 + k);
+					String srcIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+					String dstIP = General.int2WC(10, 8) + General.int2WC(i+1, 8) + General.int2WC(k+1, 8) + "xxxxxxxx";
+					String srcPort = "xxxxxxxxxxxxxxxx";
+					String dstPort = "xxxxxxxxxxxxxxxx";
+					String ecmp = "xx";
+					ip = HeaderFactory.generateHeader(srcIP+dstIP+srcPort+dstPort+ecmp);
+					//ip = HeaderFactory.generateHeader(General.int2WC(i, 2) + General.int2WC(k, 2) + "xxxx");
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					rule.setMatch(ip);
+					this.NTF.addFwdRule(rule);
+				}
+			}
+		}
+		// Add north rules
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 2; j++) {
+				for(int k = 0; k < 2; k++) {
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					outPorts = new ArrayList<Integer>();
+					for(int l = 0; l < 4; l++) {
+						inPorts.add(30000 + i * 200 + j * 100 + l);
+					}
+					for(int l = 0; l < 2; l++) {
+						inPorts.add(40000 + i * 200 + j * 100 + l);
+					}
+					outPorts.add(40000 + i * 200 + j * 100 + k);
+					String srcIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+					String dstIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+					String srcPort = "xxxxxxxxxxxxxxxx";
+					String dstPort = "xxxxxxxxxxxxxxxx";
+					String ecmp = General.int2WC(k, 1)+"x";
+					ip = HeaderFactory.generateHeader(srcIP+dstIP+srcPort+dstPort+ecmp);
+					//ip = HeaderFactory.generateHeader("xxxxxx" + General.int2WC(k, 1) + "x");
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					rule.setMatch(ip);
+					this.NTF.addFwdRule(rule);
+				}
+			}
+		}
+		// Add d rules
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 4; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(50000 + i * 100 + k);
+				}
+				outPorts.add(50000 + i * 100 + j);
+				String srcIP = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+				String dstIP = General.int2WC(10, 8) + General.int2WC(j+1, 8) + "xxxxxxxxxxxxxxxx";
+				String srcPort = "xxxxxxxxxxxxxxxx";
+				String dstPort = "xxxxxxxxxxxxxxxx";
+				String ecmp = "xx";
+				ip = HeaderFactory.generateHeader(srcIP+dstIP+srcPort+dstPort+ecmp);
+				//ip = HeaderFactory.generateHeader(General.int2WC(j, 2) + "xxxxxx");
+				rule.setInPorts(inPorts);
+				rule.setOutPorts(outPorts);
+				rule.setMatch(ip);
+				this.NTF.addFwdRule(rule);
+			}
+		}
+		
+		// Add NTF rules (links)
+		// Add p2a links
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int k = 0; k < 4; k++) {
+					// North Link
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(20000 + i * 4 * 100 + j + k * 100);
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(30000 + i * 2 * 100 + j * 100 + k);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+
+					// South Link
+					rule = new Rule();
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(20000 + i * 4 * 100 + j + k * 100);
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(30000 + i * 2 * 100 + j * 100 + k);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				}
+			}
+		}
+		// Add d2p links
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				for (int k = 0; k < 4; k++) {
+					// North Link
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(40000 + i * 100 + j + k * 200);
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(50000 + i * 2 * 100 + j * 100 + k);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+
+					// South Link
+					rule = new Rule();
+					outPorts = new ArrayList<Integer>();
+					outPorts.add(40000 + i * 100 + j + k * 200);
+					inPorts = new ArrayList<Integer>();
+					inPorts.add(50000 + i * 2 * 100 + j * 100 + k);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					this.TTF.addLinkRule(rule);
+				}
+			}
+		}
+		long startTime = System.nanoTime();
+		RuleFactory.Preprocess(this.NTF);
+		long stopTime = System.nanoTime();
+		System.out.println(stopTime - startTime);
+	}
+	
+	public void initFattree4_8_16_mini() {
+		for(int i = 0; i<16; i++) {
+			for(int j = 0; j<4; j++) {
+				this.hostIDs.add(10000+100*i+j);
+			}
+		}
+		//layer = 3
+		int dNum = 4;
+		int pNum = 8;
+		int aNum = 16;
+		
+		int d2p_dNum = 2;
+		int d2p_pNum = 4;
+		int p2a_pNum = 2;
+		int p2a_aNum = 4;
+		
+		//Init a fattree test network
+		Rule rule;
+		ArrayList<Integer> inPorts;
+		ArrayList<Integer> outPorts;
+		Header ip;
+		rule = new Rule();
+		inPorts = new ArrayList<Integer>();
+		// Add TTF rules (transfer Functions)
+		// Add a rules
+		// Add south rules
+		for (int i = 0; i < 16; i++) {
+			for(int j = 0; j < 4; j++) {
+				rule = new Rule();
+				inPorts = new ArrayList<Integer>();
+				outPorts = new ArrayList<Integer>();
+				for(int k = 0; k < 4; k++) {
+					inPorts.add(10000 + i * 100 + k);
+				}
+				for(int k = 0; k < 2; k++) {
+					inPorts.add(20000 + i * 100 + k);
+				}
+				outPorts.add(10000 + i * 100 + j);
 				ip = HeaderFactory.generateHeader(General.int2WC(i, 4)+General.int2WC(j, 2)+"xx");
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
