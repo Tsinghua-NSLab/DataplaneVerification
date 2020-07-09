@@ -21,6 +21,9 @@ public class RuleFactory{
 		}
 	}
 	public static void Preprocess(BasicTF TF) {
+		long starttime = System.nanoTime();
 		Preprocess(TypeConfig.RULE_TYPE, TF);
+		long stoptime = System.nanoTime();
+		System.out.println("Preprocess: " + (stoptime - starttime));
 	}
 }

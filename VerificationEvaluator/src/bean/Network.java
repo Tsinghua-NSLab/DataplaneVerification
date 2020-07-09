@@ -239,10 +239,7 @@ public class Network implements Serializable{
 				}
 			}
 		}
-		long startTime = System.nanoTime();
 		RuleFactory.Preprocess(this.NTF);
-		long stopTime = System.nanoTime();
-		System.out.println(stopTime - startTime);
 	}
 	
 	public void initFattree4_8_16_mini() {
@@ -426,10 +423,7 @@ public class Network implements Serializable{
 				}
 			}
 		}
-		long startTime = System.nanoTime();
 		RuleFactory.Preprocess(this.NTF);
-		long stopTime = System.nanoTime();
-		System.out.println(stopTime - startTime);
 	}
 	
 	public void initFattree2_4_4() {

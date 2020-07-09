@@ -437,7 +437,8 @@ public class HS implements Header,Serializable{
 					continue;
 				}
 				if(this.getHsList().get(j).contains(this.getHsList().get(i))) {
-					if(j<i) {
+					if((!this.getHsList().get(i).equals(this.getHsList().get(j)))||j<i) {
+					//if(j<i) {
 						flag = true;
 						break;
 					}

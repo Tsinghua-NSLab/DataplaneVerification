@@ -30,7 +30,8 @@ public class driver{
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
 		Node Pkt = new Node();
-		Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
+		//Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
+		Pkt.setHdr(HeaderFactory.generateHeader(256));
 		Pkt.setPort(10000);
 		ArrayList<Integer> Ports = new ArrayList<Integer>();
 		Ports.add(11503);
@@ -40,6 +41,7 @@ public class driver{
 	
 	public static void massTest() {
 		Network network = new Network();
+		//network.initFattree2_4_4();
 		network.initFattree4_8_16_mini();
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
@@ -50,7 +52,8 @@ public class driver{
 					continue;
 				}
 				Node Pkt = new Node();
-				Pkt.setHdr(HeaderFactory.generateHeader(98,'x'));
+				Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
+				//Pkt.setHdr(HeaderFactory.generateHeader(256));
 				Pkt.setPort(network.hostIDs.get(i));
 				ArrayList<Integer> Ports = new ArrayList<Integer>();
 				Ports.add(network.hostIDs.get(j));
@@ -64,7 +67,7 @@ public class driver{
 	}
 	
 	public static void main(String args[]) {
-		singleTest();
-		//massTest();
+		//singleTest();
+		massTest();
 	}
 }

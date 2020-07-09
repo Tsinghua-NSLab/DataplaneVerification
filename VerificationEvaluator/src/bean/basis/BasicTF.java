@@ -275,6 +275,9 @@ public class BasicTF implements Serializable{
 		}
 		this.idToAffectedBy.clear();
 		this.idToInfluenceOn.clear();
+		for(int i = 0; i < this.rules.size(); i++) {
+			this.rules.get(i).match.cleanUp();
+		}
 	}
 	
 	public ArrayList<Rule> ruleDecoupleSingle(Rule rule, Influence influence){

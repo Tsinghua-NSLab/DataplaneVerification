@@ -20,6 +20,7 @@ public class BitMask implements AbstractIP{
 		length = bitMask.length;
 		mainBit.or(bitMask.mainBit);
 		maskBit.or(bitMask.maskBit);
+		
 	}
 	
 	public BitMask(int Length) {
@@ -274,7 +275,12 @@ public class BitMask implements AbstractIP{
 				otherTmp.or(otherBM.mainBit);
 				otherTmp.and(otherBM.maskBit);
 				tmp.xor(otherTmp);
-				return tmp.isEmpty();
+				
+				BitSet tmp2 = new BitSet(length);
+				tmp2.or(this.maskBit);
+				tmp2.xor(otherBM.maskBit);
+				
+				return (tmp.isEmpty())&&(tmp2.isEmpty());
 			}else {
 				System.out.println("Error: length mismatch");
 			}
@@ -291,7 +297,7 @@ public class BitMask implements AbstractIP{
 			if(this.length == otherBM.length) {
 				BitSet maskFeature = new BitSet(length);
 				maskFeature.or(maskBit);
-				maskFeature.or(maskBit);
+				maskFeature.or(otherBM.maskBit);
 				maskFeature.xor(otherBM.maskBit);
 				if(!maskFeature.isEmpty()) {
 					return false;
@@ -301,9 +307,9 @@ public class BitMask implements AbstractIP{
 				feature.and(this.maskBit);
 				BitSet otherFeature = new BitSet(length);
 				otherFeature.or(otherBM.mainBit);
-				otherFeature.and(otherBM.maskBit);
+				otherFeature.and(this.maskBit);
 				
-				otherFeature.and(feature);
+				//otherFeature.and(feature);
 				otherFeature.xor(feature);
 				return otherFeature.isEmpty();
 			}else {
