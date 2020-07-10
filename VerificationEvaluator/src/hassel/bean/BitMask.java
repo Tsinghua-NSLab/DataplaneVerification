@@ -20,13 +20,12 @@ public class BitMask implements AbstractIP{
 		length = bitMask.length;
 		mainBit.or(bitMask.mainBit);
 		maskBit.or(bitMask.maskBit);
-		
 	}
 	
 	public BitMask(int Length) {
 		length = Length;
-		mainBit.set(0,length);
-		maskBit.set(0,length);
+		mainBit.clear(0,length);
+		maskBit.clear(0,length);
 	}
 	
 	public BitMask(String wcString) {

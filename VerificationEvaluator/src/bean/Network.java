@@ -466,7 +466,7 @@ public class Network implements Serializable{
 				outPorts.add(100 + i*10 + j);
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
-				ip = HeaderFactory.generateHeader(General.int2WC(i, 2)+General.int2WC(j, 2));
+				ip = HeaderFactory.generateHeader(General.int2WC(i, 2)+General.int2WC(j, 2)+"xxxx");
 				rule.setMatch(ip);
 				this.NTF.addFwdRule(rule);
 			}
@@ -481,7 +481,7 @@ public class Network implements Serializable{
 				outPorts.add(200 + i*10 + j);
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
-				ip = HeaderFactory.generateHeader("xx"+j+"x");
+				ip = HeaderFactory.generateHeader("xxxx"+"xx"+"x"+j);
 				rule.setMatch(ip);
 				this.NTF.addFwdRule(rule);
 			}
@@ -500,7 +500,7 @@ public class Network implements Serializable{
 				outPorts.add(300 + i*10 + j);
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
-				ip = HeaderFactory.generateHeader((i/2)+(j+"xx"));
+				ip = HeaderFactory.generateHeader((i/2)+(j+"xx")+"xx"+"xx");
 				rule.setMatch(ip);
 				this.NTF.addFwdRule(rule);
 			}
@@ -516,26 +516,28 @@ public class Network implements Serializable{
 				outPorts.add(400 + i*10 + j);
 				rule.setInPorts(inPorts);
 				rule.setOutPorts(outPorts);
-				ip = HeaderFactory.generateHeader(((i/2)^1)+(j+"xx"));
+				ip = HeaderFactory.generateHeader("xxxx"+"xx"+j+"x");
 				rule.setMatch(ip);
 				this.NTF.addFwdRule(rule);
 			}
 		}
 		//Add d rules
 		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 4; j++) {
-				rule = new Rule();
-				inPorts = new ArrayList<Integer>();
-				outPorts = new ArrayList<Integer>();
-				for(int k = 0; k < 4; k++) {
-					inPorts.add(500 + i*10 + k);
+			for(int j = 0; j < 2; j++) {
+				for(int ecmp = 0; ecmp < 2; ecmp++) {
+					rule = new Rule();
+					inPorts = new ArrayList<Integer>();
+					outPorts = new ArrayList<Integer>();
+					for(int k = 0; k < 4; k++) {
+						inPorts.add(500 + i*10 + k);
+					}
+					outPorts.add(500 + i*10 + j*2 + ecmp);
+					rule.setInPorts(inPorts);
+					rule.setOutPorts(outPorts);
+					ip = HeaderFactory.generateHeader(j+"x"+"xx"+"x"+ecmp+"xx");
+					rule.setMatch(ip);
+					this.NTF.addFwdRule(rule);
 				}
-				outPorts.add(500 + i*10 + j);
-				rule.setInPorts(inPorts);
-				rule.setOutPorts(outPorts);
-				ip = HeaderFactory.generateHeader(General.int2WC(j, 2)+"xx");
-				rule.setMatch(ip);
-				this.NTF.addFwdRule(rule);
 			}
 		}
 		
