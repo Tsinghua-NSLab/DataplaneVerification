@@ -27,12 +27,12 @@ public class driver{
 	public static void singleTest() {
 		Network network = new Network();
 		network.initFattree2_4_4();
-		//network.initFattree4_8_16_mini();
+		//network.initFattree4_8_16();
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
 		Node Pkt = new Node();
-		Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
-		//Pkt.setHdr(HeaderFactory.generateHeader(256));
+		Pkt.setHdr(HeaderFactory.generateHeader(34,'x'));
+		//Pkt.setHdr(HeaderFactory.generateHeader(128));
 		Pkt.setPort(100);
 		ArrayList<Integer> Ports = new ArrayList<Integer>();
 		Ports.add(133);
@@ -43,7 +43,7 @@ public class driver{
 	public static void massTest() {
 		Network network = new Network();
 		network.initFattree2_4_4();
-		//network.initFattree4_8_16_mini();
+		//network.initFattree4_8_16();
 		//Save.saveNetwork(network, "stanfordNetwork.dat");
 		//Network network = Save.readNetwork("stanfordNetwork.dat");
 		long starttime = System.nanoTime();
@@ -53,7 +53,7 @@ public class driver{
 					continue;
 				}
 				Node Pkt = new Node();
-				//Pkt.setHdr(HeaderFactory.generateHeader(8,'x'));
+				//Pkt.setHdr(HeaderFactory.generateHeader(34,'x'));
 				Pkt.setHdr(HeaderFactory.generateHeader(128));
 				Pkt.setPort(network.hostIDs.get(i));
 				ArrayList<Integer> Ports = new ArrayList<Integer>();
