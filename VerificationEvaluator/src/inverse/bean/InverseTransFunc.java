@@ -60,7 +60,7 @@ public class InverseTransFunc implements TransferFunc{
 		ArrayList<Node> result = new ArrayList<Node>();
 		ArrayList<Integer> modInPorts = new ArrayList<Integer>();
 		modInPorts.addAll(rule.getInPorts());
-		//If not sedning on receiving port, remove it from outports.
+		//If not sending on receiving port, remove it from outports.
 		if(!TF.sendOnReceivingPort&&modInPorts.contains(output.getPort())) {
 			modInPorts.remove(modInPorts.indexOf(output.getPort()));
 		}

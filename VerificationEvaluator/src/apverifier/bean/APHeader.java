@@ -1,6 +1,12 @@
 package apverifier.bean;
 
 import java.util.HashMap;
+import java.util.List;
+
+import com.microsoft.z3.BitVecExpr;
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
 
 import bean.basis.Ip;
 import interfaces.Header;
@@ -131,6 +137,11 @@ public class APHeader implements Header {
 	}
 
 	@Override
+	public String toString() {
+		return this.bdd.toString();
+	}
+	
+	@Override
 	public void and(Header header) {
 		// TODO: check the operation
 		if (APHeader.checkCompatibility(this, header)) {
@@ -147,6 +158,34 @@ public class APHeader implements Header {
 		return newH;
 	}
 
+
+	@Override
+	public BoolExpr z3Match(Context ctx, Expr pkt) {
+		// TODO Auto-generated method stub
+		BitVecExpr pkt_bv = (BitVecExpr) pkt;
+		BoolExpr result = ctx.mkBool(false);
+		List<byte[]> bddArrays = this.bdd.allsat();
+		for(byte[] bddArray: bddArrays) {
+			BoolExpr tempExpr = ctx.mkBool(true);
+			for(int i = 0; i < this.length; i++)
+			{
+				if(bddArray[i] == 1) {
+					BitVecExpr test_bv = ctx.mkBV(2<<i, this.length);
+					BoolExpr test = ctx.mkEq(ctx.mkBVAND(test_bv, pkt_bv), test_bv);
+					tempExpr = ctx.mkAnd(test, tempExpr);
+				}else if(bddArray[i] == 0) {
+					BitVecExpr test_bv = ctx.mkBV(2<<i, this.length);
+					BitVecExpr zero = ctx.mkBV(0, this.length);
+					BoolExpr test = ctx.mkEq(ctx.mkBVAND(test_bv, pkt_bv), zero);
+					tempExpr = ctx.mkAnd(test, tempExpr);
+				}
+			}
+			result = ctx.mkOr(result, tempExpr);
+		}
+		return result;
+	}
+
+	
 	@Override
 	public void complement() {
 		// TODO Auto-generated method stub

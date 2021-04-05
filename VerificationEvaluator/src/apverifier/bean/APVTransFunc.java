@@ -6,14 +6,14 @@ import java.util.HashMap;
 import bean.basis.BasicTF;
 import bean.basis.Influence;
 import bean.basis.Rule;
+import factory.HeaderFactory;
 import interfaces.Header;
 
 public class APVTransFunc{
-	ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+	public static ArrayList<Predicate> predicates = new ArrayList<Predicate>();
 	BasicTF TF;
 	//TODO use hashmap to replace arrayList?
 	public int nextID = 0;
-	public static int length = 3;
 	
 	public static void transferBasicTF(BasicTF TF) {
 		new APVTransFunc(TF);
@@ -29,9 +29,9 @@ public class APVTransFunc{
 		return nextID++;
 	}
 	
-	public void setLength(int length) {
-		APVTransFunc.length = predicates.size();
-	}
+	//public void setLength(int length) {
+	//	APVTransFunc.length = predicates.size();
+	//}
 	
 	public void generatePredicates() {
 		for(String key: TF.getIdToRule().keySet())
@@ -51,7 +51,7 @@ public class APVTransFunc{
 		HashMap<String, Atom> tempHeaders = new HashMap<String, Atom>();
 		for(String key: TF.getIdToRule().keySet()) {
 			if(TF.getIdToRule().get(key).getAction()=="fwd") {
-				tempHeaders.put(key, new Atom(length));
+				tempHeaders.put(key, new Atom(APVTransFunc.predicates.size()));
 			}
 		}
 		for(int i = 0; i<predicates.size() ; i++) {
@@ -71,11 +71,11 @@ public class APVTransFunc{
 		}
 	}
 	
-	public Atom headerToAtom(Header header) {
-		if(header.getClass().getName()=="apverifier.bean.Atom") {
+	public static Atom headerToAtom(Header header) {
+		if(header.getClass().getName() == "apverifier.bean.Atom") {
 			System.out.println("noNeedToChange");
 		}else {
-			Atom result = new Atom(length);
+			Atom result = new Atom(APVTransFunc.predicates.size());
 			for(int i = 0; i < predicates.size(); i++) {
 				Predicate predicate = predicates.get(i);
 				Header temp = header.copyAnd(predicate.getHeader());
@@ -84,6 +84,23 @@ public class APVTransFunc{
 				}
 			}
 			return result;
+		}
+		return null;
+	}
+	
+	public static Header AtomToHeader(Atom atom) {
+		if(atom.getClass().getName() != "apverifier.bean.Atom") {
+			assert false;
+		}else {
+			Header header = null;
+			for(int i : atom.atomIndexs) {
+				if(header == null) {
+					header = predicates.get(i).getHeader().copy();
+				}else {
+					header.add(predicates.get(i).getHeader());
+				}
+			}
+			return header;
 		}
 		return null;
 	}

@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.microsoft.z3.BitVecExpr;
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+
 import bean.basis.Ip;
 import interfaces.Header;
+import apverifier.bean.APVTransFunc;
 
 public class Atom implements Header{
 	HashSet<Integer> atomIndexs = new HashSet<Integer>();
@@ -13,7 +19,7 @@ public class Atom implements Header{
 	ArrayList<String> appliedRuleIDs = new ArrayList<String>();
 	ArrayList<Integer> appliedInport = new ArrayList<Integer>();
 	public Atom() {
-		this.length = APVTransFunc.length;
+		this.length = APVTransFunc.predicates.size();
 	}
 	
 	public Atom(int length) {
@@ -80,6 +86,16 @@ public class Atom implements Header{
 	public Header copyAnd(Header header) {
 		Header result = this.copy();
 		result.and(header);
+		return result;
+	}
+	
+	@Override
+	public BoolExpr z3Match(Context ctx, Expr pkt) {
+		// TODO Auto-generated method stub
+		BoolExpr result = ctx.mkBool(false);
+		for(int i : this.atomIndexs) {
+			result = ctx.mkOr(result, ctx.mkEq(pkt, ctx.mkInt(i)));
+		}
 		return result;
 	}
 

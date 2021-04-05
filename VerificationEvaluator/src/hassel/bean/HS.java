@@ -9,6 +9,8 @@ import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 import interfaces.Header;
 
+import com.microsoft.z3.*;
+
 public class HS implements Header,Serializable{
 	//hsList: list of all wildcards included
 	//hsDiff: a list of wildcard not included in the headerspace.
@@ -40,6 +42,7 @@ public class HS implements Header,Serializable{
 	public void setHsDiff(ArrayList<ArrayList<AbstractIP>> hsDiff) {
 		this.hsDiff = hsDiff;
 	}
+	@Override
 	public int getLength() {
 		return length;
 	}
@@ -236,6 +239,21 @@ public class HS implements Header,Serializable{
 		this.cleanUp();
 		System.out.print("");
 	}
+	
+	@Override
+	public BoolExpr z3Match(Context ctx, Expr pkt) {
+		BoolExpr result = ctx.mkBool(false);
+		for(int i = 0; i < this.getHsList().size(); i++) {
+			AbstractIP tempIP = this.getHsList().get(i);
+			BoolExpr tempExpr = tempIP.z3Match(ctx, pkt);
+			for(AbstractIP tempDiffIP : this.getHsDiff().get(i)) {
+				tempExpr = ctx.mkAnd(tempExpr, ctx.mkNot(tempDiffIP.z3Match(ctx, pkt)));
+			}
+			result = ctx.mkOr(result, tempExpr);
+		}
+		return result;
+	}
+	
 	@Override
 	public Header copyAnd(Header other) {
 		Header cpy = this.copy();

@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import bean.basis.Ip;
-
+import com.microsoft.z3.*;
 public interface Header{
 	//Init 
 	void setHeader(Ip ip);
 	String toString();
 	//get
+	int getLength();
 	//ArrayList<AbstractIP> getHsList();
 	//ArrayList<ArrayList<AbstractIP>> getHsDiff();
 	//Set Operation
@@ -33,6 +34,7 @@ public interface Header{
 	
 	boolean isSubsetOf(Header other);
 	boolean isEmpty();
+	BoolExpr z3Match(Context ctx, Expr pkt);
 	//Others
 	void cleanUp();
 	void pushAppliedTfRule(String ruleID, int inPort);

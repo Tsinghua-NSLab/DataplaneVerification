@@ -9,6 +9,8 @@ import hassel.bean.HSAVerifier;
 import interfaces.TransferFunc;
 import inverse.bean.InverseTransFunc;
 import inverse.bean.InverseVerifier;
+import smt.bean.SMTTransFunc;
+import smt.bean.Z3Verifier;
 
 public class TransferFuncFactory{	
 	public static ArrayList<Node> findReachabilityByPropagation(String type, BasicTF BasicNTF, BasicTF BasicTTF, Node Pkt, ArrayList<Integer> Ports){
@@ -20,6 +22,9 @@ public class TransferFuncFactory{
 			InverseTransFunc NTF = new InverseTransFunc(BasicNTF);
 			InverseTransFunc TTF = new InverseTransFunc(BasicTTF);
 			return InverseVerifier.findReachabilityByPropagation(NTF, TTF, Pkt, Ports);
+		}else if(type == "Z3") {
+			//SMTTransFunc TF = new SMTTransFunc(BasicNTF, BasicTTF);
+			return Z3Verifier.findReachabilityByPropagation(BasicNTF, BasicTTF, Pkt, Ports);
 		}
 		return null;
 	}

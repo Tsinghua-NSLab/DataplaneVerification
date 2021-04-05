@@ -9,6 +9,7 @@ import bean.basis.Node;
 import hassel.bean.HSATransFunc;
 import interfaces.Header;
 import interfaces.TransferFunc;
+import smt.bean.SMTTransFunc;
 
 public class FindReachability{
 	public static ArrayList<Node> findReachabilityByPropagation(Network network, Node inputPkt, ArrayList<Integer> outPorts){

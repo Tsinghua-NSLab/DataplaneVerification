@@ -1,5 +1,10 @@
 package bean;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -768,6 +773,83 @@ public class Network implements Serializable{
 		RuleFactory.Preprocess(this.NTF);
 	}
 	
+	public void initStanfordSimple() {
+		ArrayList<String> rtrNames = new ArrayList<String>();
+		rtrNames.add("bbra_rtr");
+		rtrNames.add("bbrb_rtr");
+		rtrNames.add("boza_rtr");
+		rtrNames.add("bozb_rtr");
+		rtrNames.add("coza_rtr");
+		rtrNames.add("cozb_rtr");
+		rtrNames.add("goza_rtr");
+		rtrNames.add("gozb_rtr");
+		rtrNames.add("poza_rtr");
+		rtrNames.add("pozb_rtr");
+		rtrNames.add("roza_rtr");
+		rtrNames.add("rozb_rtr");
+		rtrNames.add("soza_rtr");
+		rtrNames.add("sozb_rtr");
+		rtrNames.add("yoza_rtr");
+		rtrNames.add("yozb_rtr");
+		for(String rtrName: rtrNames) {
+			FileReader fr;
+			try {
+				fr = new FileReader("examples\\simple\\"+rtrName+".tf");
+				BufferedReader br=new BufferedReader(fr);
+				String line=br.readLine();
+				String[] arrs=null;
+				while ((line=br.readLine())!=null) {
+					if(line.startsWith("rw")) {
+						assert false;
+					}else if(!line.startsWith("fwd")) {
+						continue;
+					}
+					Rule rule = new Rule();
+					int index = line.indexOf("]");
+					index = line.indexOf("]", index+1);
+					String meaningful = line.substring(0, index+1);
+					arrs = meaningful.split("\\$");
+					String inportsString = arrs[1];
+					String matchString = arrs[2];
+					String outportString = arrs[7];
+					rule.setInPorts(General.string2Array(inportsString));
+					rule.setOutPorts(General.string2Array(outportString));
+					Header ip = HeaderFactory.generateHeader(matchString);
+					rule.setMatch(ip);
+					this.NTF.addFwdRule(rule);
+				}
+				br.close();
+				fr.close();
+		    } catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		RuleFactory.Preprocess(this.NTF);
+		FileReader fr;
+		try {
+			fr = new FileReader("examples\\simple\\topology.tf");
+			BufferedReader br=new BufferedReader(fr);
+			String line=br.readLine();
+			String[] arrs=null;
+			while ((line=br.readLine())!=null) {
+				if(!line.startsWith("link")) {
+					continue;
+				}
+				Rule rule = new Rule();
+				arrs = line.split("\\$");
+				String inportsString = arrs[1];
+				String outportString = arrs[7];
+				rule.setInPorts(General.string2Array(inportsString));
+				rule.setOutPorts(General.string2Array(outportString));
+				this.TTF.addLinkRule(rule);
+			}
+			br.close();
+			fr.close();
+	    } catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void initStanford() {
 		//Add routers
 		this.getRouters().put("bbra_rtr", ParserFactory.generateParser(1));
@@ -921,5 +1003,60 @@ public class Network implements Serializable{
 	}
 	public int getport(String router, String Iface) {
 		return routers.get(router).get_port_id(Iface);
+	}
+	
+	public void importFromFile(String FileName) {
+		FileReader fr;
+		try {
+			fr = new FileReader(FileName);
+			BufferedReader br=new BufferedReader(fr);
+			String line=br.readLine();
+			String[] arrs=null;
+			while ((line=br.readLine())!=null) {
+				if(line.startsWith("fwd")) {
+					Rule rule = new Rule();
+					int index = line.indexOf("]");
+					index = line.indexOf("]", index+1);
+					String meaningful = line.substring(0, index+1);
+					arrs = meaningful.split("\\$");
+					String inportsString = arrs[1];
+					String matchString = arrs[2].substring(1, arrs[2].length()-1);
+					String outportString = arrs[3];
+					rule.setInPorts(General.string2Array(inportsString));
+					rule.setOutPorts(General.string2Array(outportString));
+					Header ip = HeaderFactory.generateHeader(matchString);
+					rule.setMatch(ip);
+					this.NTF.addFwdRule(rule);
+				}else if(line.startsWith("link")) {
+					Rule rule = new Rule();
+					arrs = line.split("\\$");
+					String inportsString = arrs[1];
+					String outportString = arrs[2];
+					rule.setInPorts(General.string2Array(inportsString));
+					rule.setOutPorts(General.string2Array(outportString));
+					this.TTF.addLinkRule(rule);
+				}
+			}
+			br.close();
+			fr.close();
+	    } catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void outputToFile(String FileName) {
+		try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(FileName));
+            for(Rule rule : this.NTF.rules) {
+            	out.write("fwd$" + rule.toString() + "\n");
+    		}
+    		for(Rule rule : this.TTF.rules) {
+    			out.write("link$" + rule.toString() + '\n');
+    		}
+    		out.close();
+            System.out.println("Network output success");
+        } catch (IOException e) {
+        }
+		
 	}
 }

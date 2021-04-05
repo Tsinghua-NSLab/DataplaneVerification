@@ -36,10 +36,9 @@ public class SMTSolver{
 			IPSort = ctx.mkTupleSort(ctx.mkSymbol("Wildcard"),
 					new Symbol[] {ctx.mkSymbol("length"),ctx.mkSymbol("wcBit")},
 					new Sort[] {intType, BVType});
-
 		}
-		
 	}
+
 	public void initTest() {
 		//ports
 		ports.add(1);

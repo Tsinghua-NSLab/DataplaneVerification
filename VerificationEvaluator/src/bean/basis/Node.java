@@ -17,12 +17,16 @@ public class Node {
 	}
 	
 	public Node(Node node) {
-		this.hdr = node.getHdr().copy();
+		if(node.getHdr() != null) {
+			this.hdr = node.getHdr().copy();
+		}
 		this.port = node.getPort();
 	}
 	
 	public Node(Header hdr, int port) {
-		this.hdr = hdr.copy();
+		if(hdr != null) {
+			this.hdr = hdr.copy();
+		}
 		this.port = port;
 	}
 	
@@ -50,9 +54,22 @@ public class Node {
 	public void setHsHistory(ArrayList<Header> hsHistory) {
 		this.hsHistory = hsHistory;
 	}
+	@Override
+	public String toString() {
+		String result = "";
+		if(this.hdr != null) {
+			result += this.hdr.toString() + "\n";
+		}
+		result += this.port + "\n";
+		result += this.visits.toString() + "\n";
+		return result;
+	}
+		
 	public void printSelf() {
 		System.out.println("-----");
-		System.out.println(this.hdr.toString());
+		if(this.hdr != null) {
+			System.out.println(this.hdr.toString());
+		}
 		System.out.println(this.port);
 		System.out.println(this.visits);
 		System.out.println("-----");

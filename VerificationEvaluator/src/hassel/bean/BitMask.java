@@ -7,13 +7,15 @@ import java.util.HashMap;
 import bean.basis.Ip;
 import interfaces.AbstractIP;
 
+import com.microsoft.z3.*;
+
 public class BitMask implements AbstractIP{
 	int length = 0;
 	BitSet mainBit = new BitSet();//represent the value of each bit
 	BitSet maskBit = new BitSet();//0 represents this bit is not important, 1 represents this bit needs match
 	boolean isEmpty = false;
+	//For z3
 	public BitMask() {
-		
 	}
 	
 	public BitMask(BitMask bitMask) {
@@ -132,6 +134,26 @@ public class BitMask implements AbstractIP{
 		}else {
 			System.out.println("hassel.bean.BitMask: bit operation type mismatch:" + other.getClass().getName());
 		}
+	}
+	
+	@Override
+	public BoolExpr z3Match(Context ctx, Expr pkt) {
+		//TODO only can deal with hdr in 128bit
+		BitVecExpr mask = null;
+		BitVecExpr main = null;
+		if(this.maskBit.isEmpty()) {
+			mask = ctx.mkBV(0, length);
+		}else {
+			mask = ctx.mkBV(this.maskBit.toLongArray()[0], length);
+		}
+		if(this.mainBit.isEmpty()) {
+			main = ctx.mkBV(0, length);
+		}else {
+			main = ctx.mkBV(this.mainBit.toLongArray()[0], length);
+		}
+		BitVecExpr match = ctx.mkBVAND((BitVecExpr)pkt, mask);
+		BoolExpr result = ctx.mkEq(main, match);
+		return result;
 	}
 
 //	@Override

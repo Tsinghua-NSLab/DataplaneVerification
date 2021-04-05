@@ -3,12 +3,15 @@ package interfaces;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.microsoft.z3.*;
+
 public interface AbstractIP{
 	//Init
 	void setMask(int rightMask);
 	void setField(HashMap<String,Integer> hsFormat, String field, long value, int rightMask);
 	//Bit operation
 	void and(AbstractIP other);
+	BoolExpr z3Match(Context ctx, Expr packet);
 	//void or(AbstractIP other);
 	//void xor(AbstractIP other);
 	//void not();

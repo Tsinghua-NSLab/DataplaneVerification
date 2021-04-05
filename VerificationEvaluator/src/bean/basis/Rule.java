@@ -2,10 +2,12 @@ package bean.basis;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import factory.AbstractIPFactory;
 import interfaces.AbstractIP;
 import interfaces.Header;
+import com.microsoft.z3.*;
 
 public class Rule implements Serializable{
 	String id = null;
@@ -164,6 +166,46 @@ public class Rule implements Serializable{
 	//public void setInfluenceOn(ArrayList<Rule> influenceOn) {
 	//	this.influenceOn = influenceOn;
 	//}
+	
+	public HashMap<Integer, ArrayList<BoolExpr>> generate_z3_rule(Context ctx, Expr pkt) {
+		HashMap<Integer, ArrayList<BoolExpr>> result = new HashMap<Integer, ArrayList<BoolExpr>>();
+		if(this.match != null) {
+			BoolExpr input = this.match.z3Match(ctx, pkt);
+			BoolExpr forward = ctx.mkBool(false);
+			for(int inPort : this.inPorts) {
+				forward = ctx.mkOr(forward, ctx.mkBoolConst("at_inport_" + String.valueOf(inPort)));
+			}
+			forward = ctx.mkAnd(forward, input);
+			for(int outPort : this.outPorts) {
+				if(!result.containsKey(outPort)) {
+					result.put(outPort, new ArrayList<BoolExpr>());
+				}
+				result.get(outPort).add(forward);
+			}
+		}else {
+			BoolExpr input = ctx.mkBool(false);
+			for(int port : this.inPorts) {
+				input = ctx.mkOr(input, ctx.mkBoolConst("at_outport_" + String.valueOf(port)));
+			}
+			for(int port : this.outPorts) {
+				if(!result.containsKey(port)) {
+					result.put(port, new ArrayList<BoolExpr>());
+				}
+				result.get(port).add(input);
+			}
+		}
+		return result;
+	}
+	public String toString() {
+		String result = "";
+		result += this.inPorts.toString() + "$";
+		if(match != null) {
+			result += this.match.toString() + "$";
+		}
+		result += this.outPorts.toString() + "$";
+		return result;
+	}
+	
 	public void clear() {
 		this.match = null;
 		this.mask = null;

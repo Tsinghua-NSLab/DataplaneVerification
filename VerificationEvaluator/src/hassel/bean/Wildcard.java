@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 
+import com.microsoft.z3.*;
+
 import interfaces.AbstractIP;
 
 public class Wildcard implements AbstractIP,Serializable{
@@ -103,6 +105,14 @@ public class Wildcard implements AbstractIP,Serializable{
 		}else {
 			System.out.println("hassel.bean.Wildcard: bit operation type mismatch:" + other.getClass().getName());
 		}
+	}
+	
+	@Override
+	public BoolExpr z3Match(Context ctx, Expr pkt) {
+		BitVecExpr wcBit = ctx.mkBV(this.wcBit.toLongArray()[0], 2*length);
+		BitVecExpr match = ctx.mkBVAND((BitVecExpr)pkt, wcBit);
+		BoolExpr result = ctx.mkEq(match, pkt);
+		return result;
 	}
 	
 	//@Override

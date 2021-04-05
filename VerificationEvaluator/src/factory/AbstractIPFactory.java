@@ -3,6 +3,7 @@ package factory;
 import hassel.bean.Wildcard;
 import interfaces.AbstractIP;
 import hassel.bean.BitMask;
+import com.microsoft.z3.*;
 
 public class AbstractIPFactory{
 	private static AbstractIP generateAbstractIP(String type, AbstractIP other) {
@@ -39,5 +40,26 @@ public class AbstractIPFactory{
 	}
 	public static AbstractIP generateAbstractIP(String wc) {
 		return generateAbstractIP(config.TypeConfig.ABSTRACT_IP_TYPE, wc);
+	}
+	
+	public static BoolExpr generateNotEmptyRule(String type, Context ctx, int length) {
+		if(type == "Wildcard") {
+			int mask = 0;
+			for(int i = 0; i < length; i++) {
+				mask = mask << 2;
+				mask = mask + 1;
+			}
+			BitVecExpr maskExpr = ctx.mkBV(mask, 2 * length);
+			BitVecExpr pkt = ctx.mkBVConst("pkt", 2 * length);
+			BitVecExpr pktAndShift = ctx.mkBVOR(ctx.mkBVRotateRight(1, pkt), pkt);
+			return ctx.mkEq(ctx.mkBVAND(maskExpr, pktAndShift), maskExpr);
+		}else if(type == "BitMask") {
+			return ctx.mkBool(true); // always true
+		}
+		return null;
+	}
+	
+	public static BoolExpr generateNotEmptyRule(Context ctx, int length) {
+		return generateNotEmptyRule(config.TypeConfig.ABSTRACT_IP_TYPE, ctx, length);
 	}
 }
