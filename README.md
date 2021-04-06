@@ -13,10 +13,10 @@ https://www.overleaf.com/read/ntkhmyzbhmgj
 
 ~~Replicate existing works~~
 
-Combine different packet expression and network model
+~~Combine different packet expression and network model~~
 --~~HSA~~
 --~~Apverifier~~
---Z3
+--~~Z3~~
 
 Do experiments
 
