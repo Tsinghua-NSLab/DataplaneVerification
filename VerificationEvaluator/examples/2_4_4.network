@@ -1,0 +1,80 @@
+fwd$[100, 101, 102, 103, 200, 201]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0000xxxx)$[100]$
+fwd$[100, 101, 102, 103, 200, 201]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0001xxxx)$[101]$
+fwd$[100, 101, 102, 103, 200, 201]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0010xxxx)$[102]$
+fwd$[100, 101, 102, 103, 200, 201]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0011xxxx)$[103]$
+fwd$[100, 101, 102, 103]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0)$[200]$
+fwd$[100, 101, 102, 103]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1)$[201]$
+fwd$[110, 111, 112, 113, 210, 211]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0100xxxx)$[110]$
+fwd$[110, 111, 112, 113, 210, 211]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0101xxxx)$[111]$
+fwd$[110, 111, 112, 113, 210, 211]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0110xxxx)$[112]$
+fwd$[110, 111, 112, 113, 210, 211]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0111xxxx)$[113]$
+fwd$[110, 111, 112, 113]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0)$[210]$
+fwd$[110, 111, 112, 113]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1)$[211]$
+fwd$[120, 121, 122, 123, 220, 221]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1000xxxx)$[120]$
+fwd$[120, 121, 122, 123, 220, 221]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1001xxxx)$[121]$
+fwd$[120, 121, 122, 123, 220, 221]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1010xxxx)$[122]$
+fwd$[120, 121, 122, 123, 220, 221]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1011xxxx)$[123]$
+fwd$[120, 121, 122, 123]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0)$[220]$
+fwd$[120, 121, 122, 123]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1)$[221]$
+fwd$[130, 131, 132, 133, 230, 231]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1100xxxx)$[130]$
+fwd$[130, 131, 132, 133, 230, 231]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1101xxxx)$[131]$
+fwd$[130, 131, 132, 133, 230, 231]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1110xxxx)$[132]$
+fwd$[130, 131, 132, 133, 230, 231]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1111xxxx)$[133]$
+fwd$[130, 131, 132, 133]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0)$[230]$
+fwd$[130, 131, 132, 133]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1)$[231]$
+fwd$[300, 400, 301, 401]$(xxxxxxxxxxxxxxxxxxxxxxxxxx00xxxxxx)$[300]$
+fwd$[300, 400, 301, 401]$(xxxxxxxxxxxxxxxxxxxxxxxxxx01xxxxxx)$[301]$
+fwd$[300, 400, 301, 401]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0x)$[400]$
+fwd$[300, 400, 301, 401]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1x)$[401]$
+fwd$[310, 410, 311, 411]$(xxxxxxxxxxxxxxxxxxxxxxxxxx00xxxxxx)$[310]$
+fwd$[310, 410, 311, 411]$(xxxxxxxxxxxxxxxxxxxxxxxxxx01xxxxxx)$[311]$
+fwd$[310, 410, 311, 411]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0x)$[410]$
+fwd$[310, 410, 311, 411]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1x)$[411]$
+fwd$[320, 420, 321, 421]$(xxxxxxxxxxxxxxxxxxxxxxxxxx10xxxxxx)$[320]$
+fwd$[320, 420, 321, 421]$(xxxxxxxxxxxxxxxxxxxxxxxxxx11xxxxxx)$[321]$
+fwd$[320, 420, 321, 421]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0x)$[420]$
+fwd$[320, 420, 321, 421]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1x)$[421]$
+fwd$[330, 430, 331, 431]$(xxxxxxxxxxxxxxxxxxxxxxxxxx10xxxxxx)$[330]$
+fwd$[330, 430, 331, 431]$(xxxxxxxxxxxxxxxxxxxxxxxxxx11xxxxxx)$[331]$
+fwd$[330, 430, 331, 431]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0x)$[430]$
+fwd$[330, 430, 331, 431]$(xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1x)$[431]$
+fwd$[500, 501, 502, 503]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0xxxx0xx)$[500]$
+fwd$[500, 501, 502, 503]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0xxxx1xx)$[501]$
+fwd$[500, 501, 502, 503]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1xxxx0xx)$[502]$
+fwd$[500, 501, 502, 503]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1xxxx1xx)$[503]$
+fwd$[510, 511, 512, 513]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0xxxx0xx)$[510]$
+fwd$[510, 511, 512, 513]$(xxxxxxxxxxxxxxxxxxxxxxxxxx0xxxx1xx)$[511]$
+fwd$[510, 511, 512, 513]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1xxxx0xx)$[512]$
+fwd$[510, 511, 512, 513]$(xxxxxxxxxxxxxxxxxxxxxxxxxx1xxxx1xx)$[513]$
+link$[200]$[300]$
+link$[300]$[200]$
+link$[210]$[301]$
+link$[301]$[210]$
+link$[201]$[310]$
+link$[310]$[201]$
+link$[211]$[311]$
+link$[311]$[211]$
+link$[220]$[320]$
+link$[320]$[220]$
+link$[230]$[321]$
+link$[321]$[230]$
+link$[221]$[330]$
+link$[330]$[221]$
+link$[231]$[331]$
+link$[331]$[231]$
+link$[400]$[500]$
+link$[500]$[400]$
+link$[410]$[501]$
+link$[501]$[410]$
+link$[420]$[502]$
+link$[502]$[420]$
+link$[430]$[503]$
+link$[503]$[430]$
+link$[401]$[510]$
+link$[510]$[401]$
+link$[411]$[511]$
+link$[511]$[411]$
+link$[421]$[512]$
+link$[512]$[421]$
+link$[431]$[513]$
+link$[513]$[431]$

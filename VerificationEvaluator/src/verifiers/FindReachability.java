@@ -67,12 +67,6 @@ public class FindReachability{
 		return paths;
 	}
 	
-	public static ArrayList<Node> findReachabilityByGraph(Network network, Node inputPkt, ArrayList<Integer> outPorts){
-		ArrayList<Node> paths = new ArrayList<Node>();
-		network.generateGraphFromLinks();
-		//TODO finish it
-		return paths;
-	}
 	public static ArrayList<Node> findReachabilityByReverse(Network network, Node outputPkt, ArrayList<Integer> outPorts){
 		return findReachabilityByReverse(network.getNTF(), network.getTTF(), outputPkt, outPorts);
 	}
